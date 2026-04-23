@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="site-header">
+    <div class="container site-header-inner">
+        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
+        <nav class="nav-right"><a href="/register" class="btn">Регистрация</a></nav>
+    </div>
+</header>
+<main class="page">
+<div class="container">
+<section class="card auth-card">
+    <h1 class="auth-title">Вход</h1>
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    <form action="/login" method="POST" class="auth-form">
+        <label>Email<input type="email" name="email" required></label>
+        <label>Пароль<input type="password" name="password" required></label>
+        <button type="submit" class="btn">Войти</button>
+    </form>
+    <p class="auth-footer">Еще нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+</section>
+</div>
+</main>
+</body>
+</html>

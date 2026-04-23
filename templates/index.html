@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORUM</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="site-header">
+    <div class="container site-header-inner">
+        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
+        <nav class="nav-right">
+            {{if .CurrentUser}}
+                <span class="user-greeting">Привет, {{.CurrentUser.Username}}</span>
+                <a href="/post/create" class="btn secondary">Создать пост</a>
+                <form action="/logout" method="POST" class="inline-form"><button type="submit" class="btn">Выйти</button></form>
+            {{else}}
+                <a href="/login" class="btn secondary">Войти</a>
+                <a href="/register" class="btn">Регистрация</a>
+            {{end}}
+        </nav>
+    </div>
+</header>
+<main class="page">
+<div class="container">
+<section class="card filters-section">
+    <h2 class="filters-title">Фильтры</h2>
+
+    <div class="filters">
+        <a href="/" class="filter-pill {{if and (eq .SelectedCat "") (eq .Selected "")}}active{{end}}">
+            Все
+        </a>
+
+        {{range .Categories}}
+            <a href="/?category={{.Name}}" class="filter-pill {{if eq $.SelectedCat .Name}}active{{end}}">
+                {{.Name}}
+            </a>
+        {{end}}
+
+        {{if .CurrentUser}}
+            <a href="/?filter=my_posts" class="filter-pill {{if eq .Selected "my_posts"}}active{{end}}">
+                Мои посты
+            </a>
+            <a href="/?filter=liked" class="filter-pill {{if eq .Selected "liked"}}active{{end}}">
+                Понравившиеся
+            </a>
+        {{end}}
+    </div>
+</section>
+
+<section class="posts-list">
+    {{if .Posts}}
+        {{range .Posts}}
+        <article class="card post-card">
+            <div class="post-top">
+                <div>
+                    <h3 class="post-title">
+                        <a href="/post?id={{.ID}}">{{.Title}}</a>
+                    </h3>
+                    <p class="post-meta">
+                        Автор: <strong>{{.AuthorName}}</strong> · {{.CreatedAt.Format "02.01.2006 15:04"}}
+                    </p>
+                </div>
+            </div>
+
+            <p class="post-content-preview">{{.Content}}</p>
+
+            {{if .Categories}}
+            <div class="post-categories">
+                {{range .Categories}}
+                    <span class="category-badge">{{.}}</span>
+                {{end}}
+            </div>
+            {{end}}
+
+            <div class="post-actions">
+                <div class="post-stats">
+                    <span>👍 {{.Likes}}</span>
+                    <span>👎 {{.Dislikes}}</span>
+                    <span>💬 {{.CommentCount}}</span>
+                </div>
+
+                {{if $.CurrentUser}}
+                <div class="reaction-actions">
+                    <form action="/reaction/post" method="POST" class="inline-form">
+                        <input type="hidden" name="post_id" value="{{.ID}}">
+                        <input type="hidden" name="value" value="1">
+                        <button class="btn small" type="submit">👍 Нравится</button>
+                    </form>
+                    <form action="/reaction/post" method="POST" class="inline-form">
+                        <input type="hidden" name="post_id" value="{{.ID}}">
+                        <input type="hidden" name="value" value="-1">
+                        <button class="btn secondary small" type="submit">👎 Не нравится</button>
+                    </form>
+                </div>
+                {{end}}
+
+                <a class="btn secondary" href="/post?id={{.ID}}">Перейти к комментариям</a>
+            </div>
+        </article>
+        {{end}}
+    {{else}}
+        <section class="card empty-state">
+            <h3>Пока постов нет</h3>
+            <p>Стань первым, кто начнет обсуждение.</p>
+            {{if .CurrentUser}}
+                <a href="/post/create" class="btn">Создать пост</a>
+            {{else}}
+                <a href="/login" class="btn secondary">Войти и написать</a>
+            {{end}}
+        </section>
+    {{end}}
+</section>
+</div>
+</main>
+</body>
+</html>

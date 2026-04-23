@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Post.Title}}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="site-header">
+    <div class="container site-header-inner">
+        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
+        <nav class="nav-right">
+            {{if .CurrentUser}}
+                <span class="user-greeting">Привет, {{.CurrentUser.Username}}</span>
+                <a href="/post/create" class="btn secondary">Создать пост</a>
+                <form action="/logout" method="POST" class="inline-form"><button type="submit" class="btn">Выйти</button></form>
+            {{else}}
+                <a href="/login" class="btn secondary">Войти</a>
+                <a href="/register" class="btn">Регистрация</a>
+            {{end}}
+        </nav>
+    </div>
+</header>
+<main class="page">
+<div class="container">
+<section class="card post-view-card">
+    <div class="post-header">
+        <div>
+            <h1 class="post-view-title">{{.Post.Title}}</h1>
+            <p class="post-view-meta">
+                Автор: <strong>{{.Post.AuthorName}}</strong>
+                <span class="dot">•</span>
+                {{.Post.CreatedAt.Format "02.01.2006 15:04"}}
+            </p>
+        </div>
+        <a href="/" class="btn secondary small">Назад к постам</a>
+    </div>
+
+    <div class="post-view-content">
+        <p>{{.Post.Content}}</p>
+    </div>
+
+    {{if .Post.Categories}}
+    <div class="post-categories">
+        {{range .Post.Categories}}
+            <span class="category-badge">{{.}}</span>
+        {{end}}
+    </div>
+    {{end}}
+
+    <div class="post-reactions-bar">
+        <div class="post-stats">
+            <span>👍 {{.Post.Likes}}</span>
+            <span>👎 {{.Post.Dislikes}}</span>
+            <span>💬 {{len .Comments}}</span>
+        </div>
+
+        {{if .CurrentUser}}
+        <div class="reaction-actions">
+            <form action="/reaction/post" method="POST" class="inline-form">
+                <input type="hidden" name="post_id" value="{{.Post.ID}}">
+                <input type="hidden" name="value" value="1">
+                <button class="btn small" type="submit">👍 Нравится</button>
+            </form>
+
+            <form action="/reaction/post" method="POST" class="inline-form">
+                <input type="hidden" name="post_id" value="{{.Post.ID}}">
+                <input type="hidden" name="value" value="-1">
+                <button class="btn secondary small" type="submit">👎 Не нравится</button>
+            </form>
+        </div>
+        {{end}}
+    </div>
+
+    {{if and .CurrentUser (eq .CurrentUser.ID .Post.AuthorID)}}
+    <div class="owner-actions">
+        <form action="/post/delete" method="POST" class="inline-form">
+            <input type="hidden" name="post_id" value="{{.Post.ID}}">
+            <button class="btn danger" type="submit">Удалить пост</button>
+        </form>
+    </div>
+    {{end}}
+</section>
+
+<section class="card comments-card">
+    <div class="section-head">
+        <h2>Комментарии</h2>
+        <span class="comments-count">{{len .Comments}}</span>
+    </div>
+</section>
+
+<section class="comments-list">
+    {{if .Comments}}
+        {{range .Comments}}
+        <article class="card comment-card">
+            <div class="comment-top">
+                <div class="comment-user-mark"></div>
+                <div>
+                    <p class="comment-author">{{.AuthorName}}</p>
+                    <p class="comment-date">{{.CreatedAt.Format "02.01.2006 15:04"}}</p>
+                </div>
+            </div>
+
+            <div class="comment-body">
+                <p>{{.Content}}</p>
+            </div>
+
+            <div class="comment-bottom">
+                <div class="comment-stats">
+                    <span>👍 {{.Likes}}</span>
+                    <span>👎 {{.Dislikes}}</span>
+                </div>
+
+                {{if $.CurrentUser}}
+                <div class="reaction-actions">
+                    <form action="/reaction/comment" method="POST" class="inline-form">
+                        <input type="hidden" name="comment_id" value="{{.ID}}">
+                        <input type="hidden" name="post_id" value="{{$.Post.ID}}">
+                        <input type="hidden" name="value" value="1">
+                        <button class="btn small" type="submit">👍</button>
+                    </form>
+
+                    <form action="/reaction/comment" method="POST" class="inline-form">
+                        <input type="hidden" name="comment_id" value="{{.ID}}">
+                        <input type="hidden" name="post_id" value="{{$.Post.ID}}">
+                        <input type="hidden" name="value" value="-1">
+                        <button class="btn secondary small" type="submit">👎</button>
+                    </form>
+                </div>
+                {{end}}
+            </div>
+        </article>
+        {{end}}
+    {{else}}
+        <section class="card empty-comments">
+            <p>Пока комментариев нет. Будь первым.</p>
+        </section>
+    {{end}}
+</section>
+
+<section class="card add-comment-card">
+    {{if .CurrentUser}}
+    <p class="add-comment-title">Добавить комментарий</p>
+    <form action="/comment/create" method="POST" class="comment-form compact-comment-form">
+        <input type="hidden" name="post_id" value="{{.Post.ID}}">
+        <textarea name="content" rows="3" placeholder="Напишите комментарий..." required></textarea>
+        <div class="comment-form-actions">
+            <button class="btn small" type="submit">Отправить</button>
+        </div>
+    </form>
+    {{else}}
+    <p class="login-hint compact-login-hint">Чтобы оставить комментарий, нужно <a href="/login">войти</a>.</p>
+    {{end}}
+</section>
+</div>
+</main>
+</body>
+</html>
