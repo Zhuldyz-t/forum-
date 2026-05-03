@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Профиль — {{.CurrentUser.Username}}</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
 </head>
 <body>
 <header class="site-header">
@@ -22,9 +26,15 @@
 <main class="page">
 <div class="container">
 <section class="card profile-card">
-    <div class="avatar">{{slice .CurrentUser.Username 0 1}}</div>
+    <div class="profile-avatar-sq" style="width:220px;height:260px;margin-top:40px;border:2px solid #d1d5db;border-radius:16px;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:170px;height:200px;">
+            <circle cx="12" cy="8" r="4" fill="#d1d5db"/>
+            <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#d1d5db"/>
+        </svg>
+    </div>
     <p class="profile-username">{{.CurrentUser.Username}}</p>
     <p class="profile-email">{{.CurrentUser.Email}}</p>
+    <div class="avatar" style="margin-top:4px;">{{slice .CurrentUser.Username 0 1}}</div>
     <div class="profile-stats">
         <div class="stat">
             <span class="stat-value">{{.PostCount}}</span>

@@ -740,3 +740,26 @@ legend { padding: 0 8px; color: var(--text-2); font-size: 14px; font-weight: 600
   .profile-stats { gap: 10px; }
   .stat { min-width: 80px; padding: 12px 14px; }
 }
+
+/* ─── Profile square avatar placeholder ─────────────────── */
+.profile-card { position: relative; }
+
+.profile-avatar-sq {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.profile-avatar-sq svg {
+    width: 20px;
+    height: 20px;
+}
