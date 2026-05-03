@@ -19,6 +19,7 @@
     <h1 class="form-title">Создать пост</h1>
     {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
     <form action="/post/create" method="POST" class="auth-form">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
         <label>Заголовок<input type="text" name="title" value="{{.Title}}" placeholder="Кратко опишите тему поста" required></label>
         <label>Текст<textarea name="content" rows="8" placeholder="Раскройте тему поста подробнее" required>{{.Content}}</textarea></label>
         <fieldset class="form-group">

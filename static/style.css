@@ -626,3 +626,9 @@ legend {
         font-size: 13px;
     }
 }
+
+.edited-badge {
+    font-size: 0.8em;
+    color: #888;
+    font-style: italic;
+}

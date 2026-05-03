@@ -56,7 +56,7 @@ Open:
 ```bash
 http://localhost:8080
 ```
-
+ 
 ## Run with Docker
 
 ```bash

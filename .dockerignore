@@ -1,0 +1,7 @@
+forum.db
+*.db
+.git
+.env
+tmp/
+vendor/
+*_test.go

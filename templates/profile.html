@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль — {{.CurrentUser.Username}}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .profile-card { max-width: 480px; margin: 0 auto; padding: 40px 32px; text-align: center; }
+        .avatar { width: 88px; height: 88px; border-radius: 50%; background: #4f46e5; color: #fff;
+                  font-size: 2.2rem; font-weight: 700; display: flex; align-items: center;
+                  justify-content: center; margin: 0 auto 20px; text-transform: uppercase; }
+        .profile-username { font-size: 1.6rem; font-weight: 700; margin: 0 0 4px; }
+        .profile-email { color: #888; margin: 0 0 24px; font-size: 0.95rem; }
+        .profile-stats { display: flex; gap: 32px; justify-content: center; margin-bottom: 24px; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; display: block; }
+        .stat-label { font-size: 0.8rem; color: #888; }
+        .profile-meta { font-size: 0.85rem; color: #aaa; }
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <div class="container site-header-inner">
+        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
+        <nav class="nav-right">
+            <a href="/profile" class="user-greeting">Привет, {{.CurrentUser.Username}}</a>
+            <form action="/logout" method="POST" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                <button type="submit" class="btn">Выйти</button>
+            </form>
+        </nav>
+    </div>
+</header>
+<main class="page">
+<div class="container">
+<section class="card profile-card">
+    <div class="avatar">{{slice .CurrentUser.Username 0 1}}</div>
+    <p class="profile-username">{{.CurrentUser.Username}}</p>
+    <p class="profile-email">{{.CurrentUser.Email}}</p>
+    <div class="profile-stats">
+        <div class="stat">
+            <span class="stat-value">{{.PostCount}}</span>
+            <span class="stat-label">Постов</span>
+        </div>
+        <div class="stat">
+            <span class="stat-value">{{.CommentCount}}</span>
+            <span class="stat-label">Комментариев</span>
+        </div>
+    </div>
+    <p class="profile-meta">На форуме с {{.CurrentUser.CreatedAt.Local.Format "02.01.2006"}}</p>
+    <div style="margin-top:24px;">
+        <a href="/" class="btn secondary">На главную</a>
+        <a href="/?filter=my_posts" class="btn" style="margin-left:8px;">Мои посты</a>
+    </div>
+</section>
+</div>
+</main>
+</body>
+</html>

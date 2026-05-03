@@ -12,9 +12,9 @@
         <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
         <nav class="nav-right">
             {{if .CurrentUser}}
-                <span class="user-greeting">Привет, {{.CurrentUser.Username}}</span>
+                <a href="/profile" class="user-greeting">Привет, {{.CurrentUser.Username}}</a>
                 <a href="/post/create" class="btn secondary">Создать пост</a>
-                <form action="/logout" method="POST" class="inline-form"><button type="submit" class="btn">Выйти</button></form>
+                <form action="/logout" method="POST" class="inline-form"><input type="hidden" name="csrf_token" value="{{.CSRFToken}}"><button type="submit" class="btn">Выйти</button></form>
             {{else}}
                 <a href="/login" class="btn secondary">Войти</a>
                 <a href="/register" class="btn">Регистрация</a>
@@ -26,6 +26,11 @@
 <div class="container">
 <section class="card filters-section">
     <h2 class="filters-title">Фильтры</h2>
+
+    <form action="/posts/search" method="GET" class="search-form" style="margin-bottom:12px;display:flex;gap:8px;">
+        <input type="text" name="q" value="{{.SearchQuery}}" placeholder="Search posts..." style="flex:1;padding:6px 10px;border:1px solid #ccc;border-radius:4px;">
+        <button type="submit" class="btn small">Поиск</button>
+    </form>
 
     <div class="filters">
         <a href="/" class="filter-pill {{if and (eq .SelectedCat "") (eq .Selected "")}}active{{end}}">
@@ -59,7 +64,7 @@
                         <a href="/post?id={{.ID}}">{{.Title}}</a>
                     </h3>
                     <p class="post-meta">
-                        Автор: <strong>{{.AuthorName}}</strong> · {{.CreatedAt.Format "02.01.2006 15:04"}}
+                        Автор: <strong>{{.AuthorName}}</strong> · {{.CreatedAt.Local.Format "02.01.2006 15:04"}}
                     </p>
                 </div>
             </div>
@@ -84,11 +89,13 @@
                 {{if $.CurrentUser}}
                 <div class="reaction-actions">
                     <form action="/reaction/post" method="POST" class="inline-form">
+                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
                         <input type="hidden" name="post_id" value="{{.ID}}">
                         <input type="hidden" name="value" value="1">
                         <button class="btn small" type="submit">👍 Нравится</button>
                     </form>
                     <form action="/reaction/post" method="POST" class="inline-form">
+                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
                         <input type="hidden" name="post_id" value="{{.ID}}">
                         <input type="hidden" name="value" value="-1">
                         <button class="btn secondary small" type="submit">👎 Не нравится</button>
@@ -112,6 +119,13 @@
         </section>
     {{end}}
 </section>
+
+{{if or .PrevURL .NextURL}}
+<div style="display:flex;gap:12px;justify-content:center;margin:16px 0;">
+    {{if .PrevURL}}<a href="{{.PrevURL}}" class="btn secondary">&#8592; Предыдущий</a>{{end}}
+    {{if .NextURL}}<a href="{{.NextURL}}" class="btn">Следующий &#8594;</a>{{end}}
+</div>
+{{end}}
 </div>
 </main>
 </body>

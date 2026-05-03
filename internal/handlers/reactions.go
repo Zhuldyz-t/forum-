@@ -14,6 +14,12 @@ func (h *Handler) ReactPost(w http.ResponseWriter, r *http.Request) {
 	if !h.methodRequired(w, r, http.MethodPost) {
 		return
 	}
+
+	if !h.validateCSRFToken(r) {
+		http.Error(w, "Invalid CSRF token", http.StatusForbidden)
+		return
+	}
+
 	postID, err := parseID(r.FormValue("post_id"))
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
@@ -43,6 +49,12 @@ func (h *Handler) ReactComment(w http.ResponseWriter, r *http.Request) {
 	if !h.methodRequired(w, r, http.MethodPost) {
 		return
 	}
+
+	if !h.validateCSRFToken(r) {
+		http.Error(w, "Invalid CSRF token", http.StatusForbidden)
+		return
+	}
+
 	commentID, err := parseID(r.FormValue("comment_id"))
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)

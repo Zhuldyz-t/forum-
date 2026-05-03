@@ -1,11 +1,15 @@
 package handlers
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"errors"
+	"forum/internal/errorpage"
 	"forum/internal/models"
 	"forum/internal/repository"
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -22,9 +26,14 @@ type Handler struct {
 	Reactions     *repository.ReactionRepository
 	Categories    *repository.CategoryRepository
 	SessionMaxAge time.Duration
+	CSRFSecret    []byte
 }
 
 func NewHandler(db *sql.DB, tmpl *template.Template) *Handler {
+	secret := make([]byte, 32)
+	if _, err := rand.Read(secret); err != nil {
+		panic(err)
+	}
 	return &Handler{
 		DB:            db,
 		Tmpl:          tmpl,
@@ -35,19 +44,28 @@ func NewHandler(db *sql.DB, tmpl *template.Template) *Handler {
 		Reactions:     &repository.ReactionRepository{DB: db},
 		Categories:    &repository.CategoryRepository{DB: db},
 		SessionMaxAge: 24 * time.Hour,
+		CSRFSecret:    secret,
 	}
 }
 
 func (h *Handler) render(w http.ResponseWriter, name string, data any, status int) {
 	w.WriteHeader(status)
 	if err := h.Tmpl.ExecuteTemplate(w, name, data); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		log.Printf("[TEMPLATE ERROR] %s: %v", name, err)
 	}
+}
+
+func (h *Handler) renderError(w http.ResponseWriter, status int, title, message string) {
+	errorpage.Render(w, h.Tmpl, status, title, message)
+}
+
+func (h *Handler) NotFound(w http.ResponseWriter, r *http.Request) {
+	h.renderError(w, http.StatusNotFound, "Страница не найдена", "Запрошенная страница не существует.")
 }
 
 func (h *Handler) methodRequired(w http.ResponseWriter, r *http.Request, method string) bool {
 	if r.Method != method {
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		h.renderError(w, http.StatusMethodNotAllowed, "Метод не поддерживается", "Этот метод HTTP не поддерживается.")
 		return false
 	}
 	return true
@@ -73,7 +91,7 @@ func (h *Handler) getCurrentUser(r *http.Request) (*models.User, error) {
 func (h *Handler) mustAuth(w http.ResponseWriter, r *http.Request) (*models.User, bool) {
 	user, err := h.getCurrentUser(r)
 	if err != nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return nil, false
 	}
 	return user, true
@@ -85,4 +103,33 @@ func parseID(s string) (int, error) {
 		return 0, errors.New("invalid id")
 	}
 	return id, nil
+}
+
+func (h *Handler) generateCSRFToken() string {
+	b := make([]byte, 16)
+	if _, err := rand.Read(b); err != nil {
+		return hex.EncodeToString([]byte(time.Now().String()))
+	}
+	return hex.EncodeToString(b)
+}
+
+func (h *Handler) validateCSRFToken(r *http.Request) bool {
+	token := r.FormValue("csrf_token")
+	cookie, err := r.Cookie("csrf_token")
+	if err != nil || token == "" || cookie.Value != token {
+		return false
+	}
+	return true
+}
+
+func (h *Handler) setCSRFCookie(w http.ResponseWriter, token string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "csrf_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteStrictMode,
+		MaxAge:   int(h.SessionMaxAge.Seconds()),
+	})
 }

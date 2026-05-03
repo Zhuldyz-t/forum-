@@ -19,6 +19,7 @@
     <h1 class="auth-title">Регистрация</h1>
     {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
     <form action="/register" method="POST" class="auth-form">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
         <label>Email<input type="email" name="email" required></label>
         <label>Имя пользователя<input type="text" name="username" required></label>
         <label>Пароль<input type="password" name="password" required></label>

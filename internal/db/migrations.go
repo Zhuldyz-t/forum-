@@ -78,5 +78,8 @@ func RunMigrations(db *sql.DB) error {
 		}
 	}
 
+	// Idempotent schema evolution: ignore error if column already exists.
+	_, _ = db.Exec(`ALTER TABLE posts ADD COLUMN updated_at DATETIME`)
+
 	return nil
 }

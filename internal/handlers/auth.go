@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"database/sql"
+	"forum/internal/logger"
 	"forum/internal/models"
+	"forum/internal/validator"
 	"net/http"
 	"strings"
 	"time"
@@ -14,53 +16,86 @@ import (
 func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		user, _ := h.getCurrentUser(r)
-		h.render(w, "register.html", models.AuthPageData{CurrentUser: user}, http.StatusOK)
+		token := h.generateCSRFToken()
+		h.setCSRFCookie(w, token)
+		h.render(w, "register.html", models.AuthPageData{CurrentUser: user, CSRFToken: token}, http.StatusOK)
 		return
 	}
 	if !h.methodRequired(w, r, http.MethodPost) {
 		return
 	}
 
+	// CSRF failure: re-render form with fresh token instead of blank error page
+	if !h.validateCSRFToken(r) {
+		token := h.generateCSRFToken()
+		h.setCSRFCookie(w, token)
+		h.render(w, "register.html", models.AuthPageData{
+			Error:     "Сессия устарела, попробуй снова",
+			CSRFToken: token,
+		}, http.StatusOK)
+		return
+	}
+
 	email := strings.TrimSpace(r.FormValue("email"))
 	username := strings.TrimSpace(r.FormValue("username"))
 	password := strings.TrimSpace(r.FormValue("password"))
-	data := models.AuthPageData{Error: "All fields are required"}
+	data := models.AuthPageData{Error: "Все поля обязательны для заполнения"}
 
 	if email == "" || username == "" || password == "" {
 		h.render(w, "register.html", data, http.StatusBadRequest)
 		return
 	}
 
+	if !validator.ValidateEmail(email) {
+		data.Error = "Неверный формат email"
+		h.render(w, "register.html", data, http.StatusBadRequest)
+		return
+	}
+	if !validator.ValidateUsername(username) {
+		data.Error = "Имя пользователя: 3–20 символов, только буквы, цифры и _"
+		h.render(w, "register.html", data, http.StatusBadRequest)
+		return
+	}
+	if !validator.ValidatePassword(password) {
+		data.Error = "Пароль должен быть не менее 6 символов"
+		h.render(w, "register.html", data, http.StatusBadRequest)
+		return
+	}
+
 	exists, err := h.Users.EmailExists(email)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		logger.Error("EmailExists", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
 		return
 	}
 	if exists {
-		data.Error = "Email is already taken"
+		data.Error = "Этот email уже занят"
 		h.render(w, "register.html", data, http.StatusBadRequest)
 		return
 	}
 
 	exists, err = h.Users.UsernameExists(username)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		logger.Error("UsernameExists", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
 		return
 	}
 	if exists {
-		data.Error = "Username is already taken"
+		data.Error = "Это имя пользователя уже занято"
 		h.render(w, "register.html", data, http.StatusBadRequest)
 		return
 	}
 
 	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		logger.Error("bcrypt.GenerateFromPassword", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
 		return
 	}
 
 	if err := h.Users.Create(email, username, string(hashed)); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		logger.Error("User.Create", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
 		return
 	}
 
@@ -70,19 +105,38 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		user, _ := h.getCurrentUser(r)
-		h.render(w, "login.html", models.AuthPageData{CurrentUser: user}, http.StatusOK)
+		token := h.generateCSRFToken()
+		h.setCSRFCookie(w, token)
+		h.render(w, "login.html", models.AuthPageData{CurrentUser: user, CSRFToken: token}, http.StatusOK)
 		return
 	}
 	if !h.methodRequired(w, r, http.MethodPost) {
 		return
 	}
 
+	// CSRF failure: re-render form with fresh token instead of blank error page
+	if !h.validateCSRFToken(r) {
+		token := h.generateCSRFToken()
+		h.setCSRFCookie(w, token)
+		h.render(w, "login.html", models.AuthPageData{
+			Error:     "Сессия устарела, попробуй снова",
+			CSRFToken: token,
+		}, http.StatusOK)
+		return
+	}
+
 	email := strings.TrimSpace(r.FormValue("email"))
 	password := strings.TrimSpace(r.FormValue("password"))
-	data := models.AuthPageData{Error: "Invalid credentials"}
+	data := models.AuthPageData{Error: "Неверный email или пароль"}
 
 	if email == "" || password == "" {
-		data.Error = "Email and password are required"
+		data.Error = "Введи email и пароль"
+		h.render(w, "login.html", data, http.StatusBadRequest)
+		return
+	}
+
+	if !validator.ValidateEmail(email) {
+		data.Error = "Неверный формат email"
 		h.render(w, "login.html", data, http.StatusBadRequest)
 		return
 	}
@@ -93,7 +147,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 			h.render(w, "login.html", data, http.StatusUnauthorized)
 			return
 		}
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		logger.Error("GetByEmail", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
 		return
 	}
 
@@ -105,7 +160,8 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	sessionID := uuid.New().String()
 	expiresAt := time.Now().Add(h.SessionMaxAge)
 	if err := h.Sessions.Replace(sessionID, user.ID, expiresAt); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		logger.Error("Session.Replace", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
 		return
 	}
 
@@ -123,6 +179,10 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	if !h.methodRequired(w, r, http.MethodPost) {
+		return
+	}
+	if !h.validateCSRFToken(r) {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	cookie, err := r.Cookie("session_id")

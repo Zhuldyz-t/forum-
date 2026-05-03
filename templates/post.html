@@ -12,9 +12,9 @@
         <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
         <nav class="nav-right">
             {{if .CurrentUser}}
-                <span class="user-greeting">Привет, {{.CurrentUser.Username}}</span>
+                <a href="/profile" class="user-greeting">Привет, {{.CurrentUser.Username}}</a>
                 <a href="/post/create" class="btn secondary">Создать пост</a>
-                <form action="/logout" method="POST" class="inline-form"><button type="submit" class="btn">Выйти</button></form>
+                <form action="/logout" method="POST" class="inline-form"><input type="hidden" name="csrf_token" value="{{.CSRFToken}}"><button type="submit" class="btn">Выйти</button></form>
             {{else}}
                 <a href="/login" class="btn secondary">Войти</a>
                 <a href="/register" class="btn">Регистрация</a>
@@ -31,7 +31,8 @@
             <p class="post-view-meta">
                 Автор: <strong>{{.Post.AuthorName}}</strong>
                 <span class="dot">•</span>
-                {{.Post.CreatedAt.Format "02.01.2006 15:04"}}
+                {{.Post.CreatedAt.Local.Format "02.01.2006 15:04"}}
+                {{if .Post.UpdatedAt}}<span class="edited-badge">(изменено {{.Post.UpdatedAt.Local.Format "02.01.2006 15:04"}})</span>{{end}}
             </p>
         </div>
         <a href="/" class="btn secondary small">Назад к постам</a>
@@ -59,12 +60,14 @@
         {{if .CurrentUser}}
         <div class="reaction-actions">
             <form action="/reaction/post" method="POST" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <input type="hidden" name="post_id" value="{{.Post.ID}}">
                 <input type="hidden" name="value" value="1">
                 <button class="btn small" type="submit">👍 Нравится</button>
             </form>
 
             <form action="/reaction/post" method="POST" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <input type="hidden" name="post_id" value="{{.Post.ID}}">
                 <input type="hidden" name="value" value="-1">
                 <button class="btn secondary small" type="submit">👎 Не нравится</button>
@@ -75,7 +78,9 @@
 
     {{if and .CurrentUser (eq .CurrentUser.ID .Post.AuthorID)}}
     <div class="owner-actions">
+        <a href="/post/edit?id={{.Post.ID}}" class="btn secondary">Редактировать пост</a>
         <form action="/post/delete" method="POST" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
             <input type="hidden" name="post_id" value="{{.Post.ID}}">
             <button class="btn danger" type="submit">Удалить пост</button>
         </form>
@@ -98,7 +103,7 @@
                 <div class="comment-user-mark"></div>
                 <div>
                     <p class="comment-author">{{.AuthorName}}</p>
-                    <p class="comment-date">{{.CreatedAt.Format "02.01.2006 15:04"}}</p>
+                    <p class="comment-date">{{.CreatedAt.Local.Format "02.01.2006 15:04"}}</p>
                 </div>
             </div>
 
@@ -115,6 +120,7 @@
                 {{if $.CurrentUser}}
                 <div class="reaction-actions">
                     <form action="/reaction/comment" method="POST" class="inline-form">
+                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
                         <input type="hidden" name="comment_id" value="{{.ID}}">
                         <input type="hidden" name="post_id" value="{{$.Post.ID}}">
                         <input type="hidden" name="value" value="1">
@@ -122,12 +128,22 @@
                     </form>
 
                     <form action="/reaction/comment" method="POST" class="inline-form">
+                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
                         <input type="hidden" name="comment_id" value="{{.ID}}">
                         <input type="hidden" name="post_id" value="{{$.Post.ID}}">
                         <input type="hidden" name="value" value="-1">
                         <button class="btn secondary small" type="submit">👎</button>
                     </form>
                 </div>
+                {{end}}
+
+                {{if and $.CurrentUser (eq $.CurrentUser.ID .UserID)}}
+                <form action="/comment/delete" method="POST" class="inline-form">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="comment_id" value="{{.ID}}">
+                    <input type="hidden" name="post_id" value="{{$.Post.ID}}">
+                    <button class="btn danger small" type="submit">Удалить</button>
+                </form>
                 {{end}}
             </div>
         </article>
@@ -139,10 +155,18 @@
     {{end}}
 </section>
 
+{{if or .PrevURL .NextURL}}
+<div style="display:flex;gap:12px;justify-content:center;margin:16px 0;">
+    {{if .PrevURL}}<a href="{{.PrevURL}}" class="btn secondary">&#8592; Предыдущий</a>{{end}}
+    {{if .NextURL}}<a href="{{.NextURL}}" class="btn">Следующий &#8594;</a>{{end}}
+</div>
+{{end}}
+
 <section class="card add-comment-card">
     {{if .CurrentUser}}
     <p class="add-comment-title">Добавить комментарий</p>
     <form action="/comment/create" method="POST" class="comment-form compact-comment-form">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
         <input type="hidden" name="post_id" value="{{.Post.ID}}">
         <textarea name="content" rows="3" placeholder="Напишите комментарий..." required></textarea>
         <div class="comment-form-actions">

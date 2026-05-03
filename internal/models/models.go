@@ -45,6 +45,7 @@ type PostSummary struct {
 	AuthorID     int
 	AuthorName   string
 	CreatedAt    time.Time
+	UpdatedAt    *time.Time
 	Categories   []string
 	Likes        int
 	Dislikes     int
@@ -67,6 +68,11 @@ type PostPageData struct {
 	Post        PostSummary
 	Comments    []CommentView
 	Error       string
+	CSRFToken   string
+	Page        int
+	HasNext     bool
+	PrevURL     string
+	NextURL     string
 }
 
 type HomePageData struct {
@@ -76,11 +82,18 @@ type HomePageData struct {
 	SelectedCat string
 	Selected    string
 	Error       string
+	CSRFToken   string
+	Page        int
+	HasNext     bool
+	PrevURL     string
+	NextURL     string
+	SearchQuery string
 }
 
 type AuthPageData struct {
 	CurrentUser *User
 	Error       string
+	CSRFToken   string
 }
 
 type CreatePostPageData struct {
@@ -90,4 +103,23 @@ type CreatePostPageData struct {
 	Title       string
 	Content     string
 	SelectedIDs map[int]bool
+	CSRFToken   string
+}
+
+type EditPostPageData struct {
+	CurrentUser *User
+	PostID      int
+	Title       string
+	Content     string
+	Error       string
+	Categories  []Category
+	SelectedIDs map[int]bool
+	CSRFToken   string
+}
+
+type ProfilePageData struct {
+	CurrentUser  *User
+	PostCount    int
+	CommentCount int
+	CSRFToken    string
 }

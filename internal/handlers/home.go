@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+	"forum/internal/logger"
 	"forum/internal/models"
 	"net/http"
 )
@@ -12,25 +14,53 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 	user, _ := h.getCurrentUser(r)
 	category := r.URL.Query().Get("category")
 	filterType := r.URL.Query().Get("filter")
+	page := parsePage(r.URL.Query().Get("page"))
 	currentUserID := 0
 	if user != nil {
 		currentUserID = user.ID
 	}
 
 	if (filterType == "my_posts" || filterType == "liked") && user == nil {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	posts, err := h.Posts.List(filterType, category, currentUserID)
+	posts, hasNext, err := h.Posts.List(filterType, category, currentUserID, page)
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		logger.Error("Posts.List", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
 		return
 	}
 	categories, err := h.Categories.List()
 	if err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		logger.Error("Categories.List", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
 		return
+	}
+
+	token := h.generateCSRFToken()
+	h.setCSRFCookie(w, token)
+
+	prevURL, nextURL := "", ""
+	if page > 1 {
+		u := fmt.Sprintf("/?page=%d", page-1)
+		if category != "" {
+			u += "&category=" + category
+		}
+		if filterType != "" {
+			u += "&filter=" + filterType
+		}
+		prevURL = u
+	}
+	if hasNext {
+		u := fmt.Sprintf("/?page=%d", page+1)
+		if category != "" {
+			u += "&category=" + category
+		}
+		if filterType != "" {
+			u += "&filter=" + filterType
+		}
+		nextURL = u
 	}
 
 	data := models.HomePageData{
@@ -39,6 +69,11 @@ func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 		Categories:  categories,
 		SelectedCat: category,
 		Selected:    filterType,
+		CSRFToken:   token,
+		Page:        page,
+		HasNext:     hasNext,
+		PrevURL:     prevURL,
+		NextURL:     nextURL,
 	}
 	h.render(w, "index.html", data, http.StatusOK)
 }
