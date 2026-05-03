@@ -156,7 +156,7 @@
 </section>
 
 {{if or .PrevURL .NextURL}}
-<div style="display:flex;gap:12px;justify-content:center;margin:16px 0;">
+<div class="pagination-bar">
     {{if .PrevURL}}<a href="{{.PrevURL}}" class="btn secondary">&#8592; Предыдущий</a>{{end}}
     {{if .NextURL}}<a href="{{.NextURL}}" class="btn">Следующий &#8594;</a>{{end}}
 </div>

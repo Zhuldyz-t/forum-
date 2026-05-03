@@ -1,87 +1,91 @@
 # Forum
 
-A simple web forum built with Go, SQLite, HTML templates, cookies-based sessions, and Docker.
+Веб-форум на Go с SQLite, HTML-шаблонами, сессиями на куках и поддержкой Docker.
 
-## Features
+## Возможности
 
-- User registration and login
-- One active session per user with cookies
-- Password hashing with bcrypt
-- Create posts with one or more categories
-- View all posts and post details
-- Create comments
-- Like and dislike posts
-- Like and dislike comments
-- Filter posts by category
-- Filter posts by current user's created posts
-- Filter posts by current user's liked posts
-- Docker support
+- Регистрация и вход с хэшированием паролей (bcrypt)
+- Одна активная сессия на пользователя (cookie-based)
+- Создание постов с выбором одной или нескольких категорий
+- Редактирование поста (заголовок, содержимое, категории)
+- Удаление своих постов и комментариев
+- Комментарии к постам
+- Лайки и дизлайки постов и комментариев (с защитой от гонки транзакциями)
+- Фильтрация постов по категории, своим постам, понравившимся
+- Поиск постов по заголовку и содержимому
+- Пагинация списка постов и комментариев
+- Профиль пользователя (количество постов, комментариев, дата регистрации)
+- Отображение времени по часовому поясу Астаны (UTC+5)
+- CSRF-защита через double-submit cookie
+- Rate limiting (10 req/s, burst 20)
+- Кастомные страницы ошибок (404, 403, 429, 500)
+- Graceful shutdown
+- Docker-поддержка с автоперезапуском
 
-## Stack
+## Стек
 
-- Go
-- SQLite
-- HTML templates
+- Go 1.21
+- SQLite (`mattn/go-sqlite3`)
+- HTML-шаблоны (`html/template`)
 - CSS
-- Docker
+- Docker / Docker Compose
 
-## Project Structure
+## Структура проекта
 
-```bash
+```
 forum/
 ├── cmd/
-│   └── main.go
+│   └── main.go               # Точка входа, маршруты, middleware
 ├── internal/
-│   ├── db/
-│   ├── handlers/
-│   ├── models/
-│   └── repository/
-├── templates/
-├── static/
+│   ├── db/                   # Инициализация БД, миграции, индексы
+│   ├── errorpage/            # Рендер страниц ошибок
+│   ├── handlers/             # HTTP-обработчики
+│   ├── logger/               # Логирование запросов и ошибок
+│   ├── middleware/           # Rate limiter, recovery
+│   ├── models/               # Структуры данных
+│   ├── repository/           # Работа с БД
+│   └── validator/            # Валидация полей
+├── templates/                # HTML-шаблоны
+├── static/                   # CSS, статика
 ├── Dockerfile
 ├── docker-compose.yml
 ├── go.mod
 └── README.md
 ```
 
-## Run locally
+## Запуск локально
 
 ```bash
 go mod tidy
 go run ./cmd
 ```
 
-Open:
+Открыть: [http://localhost:8080](http://localhost:8080)
 
-```bash
-http://localhost:8080
-```
- 
-## Run with Docker
+## Запуск через Docker
 
 ```bash
 docker compose up --build
 ```
 
-Then open:
+Открыть: [http://localhost:8080](http://localhost:8080)
 
-```bash
-http://localhost:8080
-```
+База данных сохраняется в `forum.db` на хосте (volume примонтирован).
 
-## Default categories
+## Переменные окружения
 
-- Go
-- SQL
-- HTML
-- Docker
-- Backend
-- Frontend
-- SysAdmin
+| Переменная | По умолчанию | Описание          |
+|------------|--------------|-------------------|
+| `PORT`     | `8080`       | Порт сервера      |
+| `DB_PATH`  | `forum.db`   | Путь к файлу БД   |
 
-## Notes
+## Категории по умолчанию
 
-- Sessions are stored in SQLite.
-- Only authenticated users can create posts, comments, likes, and dislikes.
-- Guests can only read posts and comments.
-- The database file `forum.db` is created automatically on first launch.
+Общее, Учёба, Вопросы, Новости, Технологии, Хобби, Другое
+
+## Заметки
+
+- Неаутентифицированные пользователи могут только читать посты и комментарии.
+- Редактировать и удалять пост/комментарий может только его автор.
+- Сессии хранятся в SQLite, истекают через 24 часа.
+- Файл `forum.db` создаётся автоматически при первом запуске.

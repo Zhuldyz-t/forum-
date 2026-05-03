@@ -27,8 +27,8 @@
 <section class="card filters-section">
     <h2 class="filters-title">Фильтры</h2>
 
-    <form action="/posts/search" method="GET" class="search-form" style="margin-bottom:12px;display:flex;gap:8px;">
-        <input type="text" name="q" value="{{.SearchQuery}}" placeholder="Search posts..." style="flex:1;padding:6px 10px;border:1px solid #ccc;border-radius:4px;">
+    <form action="/posts/search" method="GET" class="search-form">
+        <input type="text" name="q" value="{{.SearchQuery}}" placeholder="Поиск постов...">
         <button type="submit" class="btn small">Поиск</button>
     </form>
 
@@ -121,7 +121,7 @@
 </section>
 
 {{if or .PrevURL .NextURL}}
-<div style="display:flex;gap:12px;justify-content:center;margin:16px 0;">
+<div class="pagination-bar">
     {{if .PrevURL}}<a href="{{.PrevURL}}" class="btn secondary">&#8592; Предыдущий</a>{{end}}
     {{if .NextURL}}<a href="{{.NextURL}}" class="btn">Следующий &#8594;</a>{{end}}
 </div>
