@@ -36,7 +36,7 @@
         <button type="submit" class="btn small">Поиск</button>
     </form>
 
-    <div class="filters">
+    <div class="filters" style="margin-top: 16px;">
         <a href="/" class="filter-pill {{if and (eq .SelectedCat "") (eq .Selected "")}}active{{end}}">
             Все
         </a>
@@ -85,27 +85,26 @@
 
             <div class="post-actions">
                 <div class="post-stats">
-                    <span>👍 {{.Likes}}</span>
-                    <span>👎 {{.Dislikes}}</span>
-                    <span>💬 {{.CommentCount}}</span>
-                </div>
-
-                {{if $.CurrentUser}}
-                <div class="reaction-actions">
+                    {{if $.CurrentUser}}
                     <form action="/reaction/post" method="POST" class="inline-form">
                         <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
                         <input type="hidden" name="post_id" value="{{.ID}}">
                         <input type="hidden" name="value" value="1">
-                        <button class="btn small" type="submit">👍 Нравится</button>
+                        <button class="btn small" type="submit">👍 {{.Likes}}</button>
                     </form>
                     <form action="/reaction/post" method="POST" class="inline-form">
                         <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
                         <input type="hidden" name="post_id" value="{{.ID}}">
                         <input type="hidden" name="value" value="-1">
-                        <button class="btn secondary small" type="submit">👎 Не нравится</button>
+                        <button class="btn secondary small" type="submit">👎 {{.Dislikes}}</button>
                     </form>
+                    {{else}}
+                    <span>👍 {{.Likes}}</span>
+                    <span>👎 {{.Dislikes}}</span>
+                    {{end}}
+                    <span>💬 {{.CommentCount}}</span>
                 </div>
-                {{end}}
+
 
                 <a class="btn secondary" href="/post?id={{.ID}}">Перейти к комментариям</a>
             </div>
