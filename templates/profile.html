@@ -26,17 +26,16 @@
 <main class="page">
 <div class="container">
 <section class="card profile-card">
-    <div style="display: flex; gap: 24px; align-items: center;">
-        <div class="profile-avatar-sq" style="width:220px;height:260px;margin-top:40px;border:2px solid #d1d5db;border-radius:16px;display:flex;align-items:center;justify-content:center;">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:170px;height:200px;">
+    <div class="profile-inner">
+        <div class="profile-avatar-sq">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="12" cy="8" r="4" fill="#d1d5db"/>
                 <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#d1d5db"/>
             </svg>
         </div>
-        <div>
+        <div class="profile-info">
             <p class="profile-username">{{.CurrentUser.Username}}</p>
             <p class="profile-email">{{.CurrentUser.Email}}</p>
-            <div class="avatar" style="margin-top:4px;">{{slice .CurrentUser.Username 0 1}}</div>
             <div class="profile-stats">
                 <div class="stat">
                     <span class="stat-value">{{.PostCount}}</span>
@@ -48,7 +47,7 @@
                 </div>
             </div>
             <p class="profile-meta">На форуме с {{.CurrentUser.CreatedAt.Local.Format "02.01.2006"}}</p>
-            <div class="profile-actions">
+            <div class="profile-actions" style="display: flex; gap: 12px; margin-top: 16px;">
                 <a href="/" class="btn secondary">На главную</a>
                 <a href="/?filter=my_posts" class="btn">Мои посты</a>
             </div>
