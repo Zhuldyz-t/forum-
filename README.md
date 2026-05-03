@@ -39,19 +39,32 @@ forum/
 ├── internal/
 │   ├── db/                   # Инициализация БД, миграции, индексы
 │   ├── errorpage/            # Рендер страниц ошибок
-│   ├── handlers/             # HTTP-обработчики
+│   ├── handlers/             # HTTP-обработчики (auth, posts, comments, reactions, profile)
 │   ├── logger/               # Логирование запросов и ошибок
-│   ├── middleware/           # Rate limiter, recovery
-│   ├── models/               # Структуры данных
-│   ├── repository/           # Работа с БД
-│   └── validator/            # Валидация полей
-├── templates/                # HTML-шаблоны
-├── static/                   # CSS, статика
+│   ├── middleware/           # Rate limiter, CSRF, recovery
+│   ├── models/               # Структуры данных (User, Post, Comment, Category)
+│   ├── repository/           # Слой работы с БД (CRUD, транзакции)
+│   └── validator/            # Валидация входящих данных
+├── templates/                # HTML-шаблоны (index, post, profile, auth, error)
+├── static/                   # CSS, иконки, favicon
 ├── Dockerfile
 ├── docker-compose.yml
 ├── go.mod
 └── README.md
 ```
+
+## Архитектура
+
+Проект разделён по зонам ответственности между четырьмя направлениями:
+
+| Направление | Зона ответственности |
+|---|---|
+| **Backend** | HTTP-обработчики, маршруты, сессии, CSRF, middleware |
+| **База данных** | SQLite-схема, миграции, репозитории, транзакции, индексы |
+| **Frontend** | HTML-шаблоны, CSS, дизайн, адаптивность |
+| **DevOps / QA** | Docker, docker-compose, тесты, логирование, деплой |
+
+Запросы проходят путь: `middleware → handler → repository → SQLite`. Шаблоны рендерятся на сервере через `html/template`.
 
 ## Запуск локально
 
