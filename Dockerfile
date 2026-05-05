@@ -8,7 +8,7 @@ COPY . .
 RUN CGO_ENABLED=1 GOOS=linux go build -o forum ./cmd
 
 FROM alpine:latest
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat tzdata
 WORKDIR /app
 COPY --from=builder /app/forum .
 COPY --from=builder /app/templates ./templates

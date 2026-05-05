@@ -95,16 +95,6 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 	content := strings.TrimSpace(r.FormValue("content"))
 	selectedRaw := r.Form["categories"]
 
-	categoryIDs := make([]int, 0, len(selectedRaw))
-	selectedMap := map[int]bool{}
-	for _, raw := range selectedRaw {
-		id, err := strconv.Atoi(raw)
-		if err == nil && id > 0 {
-			categoryIDs = append(categoryIDs, id)
-			selectedMap[id] = true
-		}
-	}
-
 	cats, err := h.Categories.List()
 	if err != nil {
 		logger.Error("Categories.List", err)
@@ -112,12 +102,29 @@ func (h *Handler) CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	validCatIDs := make(map[int]bool, len(cats))
+	for _, c := range cats {
+		validCatIDs[c.ID] = true
+	}
+	categoryIDs := make([]int, 0, len(selectedRaw))
+	selectedMap := map[int]bool{}
+	for _, raw := range selectedRaw {
+		id, err := strconv.Atoi(raw)
+		if err == nil && id > 0 && validCatIDs[id] {
+			categoryIDs = append(categoryIDs, id)
+			selectedMap[id] = true
+		}
+	}
+
+	errToken := h.generateCSRFToken()
+	h.setCSRFCookie(w, errToken)
 	errData := models.CreatePostPageData{
 		CurrentUser: user,
 		Categories:  cats,
 		Title:       title,
 		Content:     content,
 		SelectedIDs: selectedMap,
+		CSRFToken:   errToken,
 	}
 
 	if len(categoryIDs) == 0 {
@@ -252,41 +259,44 @@ func (h *Handler) EditPost(w http.ResponseWriter, r *http.Request) {
 	content := strings.TrimSpace(r.FormValue("content"))
 	selectedRaw := r.Form["categories"]
 
+	validCatIDs := make(map[int]bool, len(cats))
+	for _, c := range cats {
+		validCatIDs[c.ID] = true
+	}
 	categoryIDs := make([]int, 0, len(selectedRaw))
 	selectedMap := map[int]bool{}
 	for _, raw := range selectedRaw {
 		id, err := strconv.Atoi(raw)
-		if err == nil && id > 0 {
+		if err == nil && id > 0 && validCatIDs[id] {
 			categoryIDs = append(categoryIDs, id)
 			selectedMap[id] = true
 		}
 	}
 
+	errToken := h.generateCSRFToken()
+	h.setCSRFCookie(w, errToken)
 	errData := models.EditPostPageData{
 		CurrentUser: user,
 		PostID:      postID,
 		Categories:  cats,
+		Title:       title,
+		Content:     content,
 		SelectedIDs: selectedMap,
+		CSRFToken:   errToken,
 	}
 
 	if len(categoryIDs) == 0 {
-		token := h.generateCSRFToken()
-		h.setCSRFCookie(w, token)
-		errData.Title, errData.Content, errData.Error, errData.CSRFToken = title, content, "Необходимо выбрать хотя бы одну категорию", token
+		errData.Error = "Необходимо выбрать хотя бы одну категорию"
 		h.render(w, "edit_post.html", errData, http.StatusBadRequest)
 		return
 	}
 	if !validator.ValidateTitle(title) {
-		token := h.generateCSRFToken()
-		h.setCSRFCookie(w, token)
-		errData.Title, errData.Content, errData.Error, errData.CSRFToken = title, content, "Заголовок должен содержать от 1 до 200 символов", token
+		errData.Error = "Заголовок должен содержать от 1 до 200 символов"
 		h.render(w, "edit_post.html", errData, http.StatusBadRequest)
 		return
 	}
 	if !validator.ValidateContent(content, 10000) {
-		token := h.generateCSRFToken()
-		h.setCSRFCookie(w, token)
-		errData.Title, errData.Content, errData.Error, errData.CSRFToken = title, content, "Содержимое должно содержать от 1 до 10000 символов", token
+		errData.Error = "Содержимое должно содержать от 1 до 10000 символов"
 		h.render(w, "edit_post.html", errData, http.StatusBadRequest)
 		return
 	}

@@ -4,6 +4,7 @@ import (
 	"forum/internal/logger"
 	"forum/internal/validator"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -58,7 +59,11 @@ func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 		h.renderError(w, http.StatusBadRequest, "Неверный запрос", "Неверный идентификатор комментария.")
 		return
 	}
-	postID := r.FormValue("post_id")
+	postID, err := parseID(r.FormValue("post_id"))
+	if err != nil {
+		h.renderError(w, http.StatusBadRequest, "Неверный запрос", "Неверный идентификатор поста.")
+		return
+	}
 
 	deleted, err := h.Comments.DeleteByAuthor(commentID, user.ID)
 	if err != nil {
@@ -71,5 +76,5 @@ func (h *Handler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/post?id="+postID, http.StatusSeeOther)
+	http.Redirect(w, r, "/post?id="+strconv.Itoa(postID), http.StatusSeeOther)
 }

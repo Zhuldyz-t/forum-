@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"crypto/rand"
 	"database/sql"
 	"encoding/hex"
@@ -11,6 +12,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -49,10 +51,14 @@ func NewHandler(db *sql.DB, tmpl *template.Template) *Handler {
 }
 
 func (h *Handler) render(w http.ResponseWriter, name string, data any, status int) {
-	w.WriteHeader(status)
-	if err := h.Tmpl.ExecuteTemplate(w, name, data); err != nil {
+	var buf bytes.Buffer
+	if err := h.Tmpl.ExecuteTemplate(&buf, name, data); err != nil {
 		log.Printf("[TEMPLATE ERROR] %s: %v", name, err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
+	w.WriteHeader(status)
+	buf.WriteTo(w) //nolint:errcheck
 }
 
 func (h *Handler) renderError(w http.ResponseWriter, status int, title, message string) {
@@ -95,6 +101,20 @@ func (h *Handler) mustAuth(w http.ResponseWriter, r *http.Request) (*models.User
 		return nil, false
 	}
 	return user, true
+}
+
+// safeRedirect returns the Referer URL only when it points to the same host,
+// preventing open-redirect attacks via a forged Referer header.
+func safeRedirect(r *http.Request, fallback string) string {
+	back := r.Referer()
+	if back == "" {
+		return fallback
+	}
+	u, err := url.Parse(back)
+	if err != nil || (u.Host != "" && u.Host != r.Host) {
+		return fallback
+	}
+	return back
 }
 
 func parseID(s string) (int, error) {

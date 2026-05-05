@@ -34,11 +34,7 @@ func (h *Handler) ReactPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	back := r.Referer()
-	if back == "" {
-		back = "/"
-	}
-	http.Redirect(w, r, back, http.StatusSeeOther)
+	http.Redirect(w, r, safeRedirect(r, "/"), http.StatusSeeOther)
 }
 
 func (h *Handler) ReactComment(w http.ResponseWriter, r *http.Request) {
@@ -69,11 +65,7 @@ func (h *Handler) ReactComment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	back := r.Referer()
-	if back == "" {
-		back = "/"
-	}
-	http.Redirect(w, r, back, http.StatusSeeOther)
+	http.Redirect(w, r, safeRedirect(r, "/"), http.StatusSeeOther)
 }
 
 func parseReactionValue(s string) (int, error) {
