@@ -7,6 +7,7 @@ type User struct {
 	Email        string
 	Username     string
 	PasswordHash string
+	Avatar       string
 	CreatedAt    time.Time
 }
 
@@ -44,6 +45,7 @@ type PostSummary struct {
 	Content      string
 	AuthorID     int
 	AuthorName   string
+	AuthorAvatar string
 	CreatedAt    time.Time
 	UpdatedAt    *time.Time
 	Categories   []string
@@ -56,7 +58,8 @@ type CommentView struct {
 	ID         int
 	PostID     int
 	UserID     int
-	AuthorName string
+	AuthorName   string
+	AuthorAvatar string
 	Content    string
 	CreatedAt  time.Time
 	Likes      int
@@ -122,4 +125,6 @@ type ProfilePageData struct {
 	PostCount    int
 	CommentCount int
 	CSRFToken    string
+	Error        string
+	Success      string
 }

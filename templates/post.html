@@ -33,6 +33,7 @@
         <div>
             <h1 class="post-view-title">{{.Post.Title}}</h1>
             <p class="post-view-meta">
+                {{if .Post.AuthorAvatar}}<img class="avatar-sm" src="/uploads/avatars/{{.Post.AuthorAvatar}}" alt="">{{else}}<span class="avatar-sm avatar-fallback">{{slice .Post.AuthorName 0 1}}</span>{{end}}
                 Автор: <strong>{{.Post.AuthorName}}</strong>
                 <span class="dot">•</span>
                 {{.Post.CreatedAt.Local.Format "02.01.2006 15:04"}}
@@ -104,7 +105,7 @@
         {{range .Comments}}
         <article class="card comment-card">
             <div class="comment-top">
-                <div class="comment-user-mark"></div>
+                {{if .AuthorAvatar}}<img class="avatar-md" src="/uploads/avatars/{{.AuthorAvatar}}" alt="">{{else}}<span class="avatar-md avatar-fallback">{{slice .AuthorName 0 1}}</span>{{end}}
                 <div>
                     <p class="comment-author">{{.AuthorName}}</p>
                     <p class="comment-date">{{.CreatedAt.Local.Format "02.01.2006 15:04"}}</p>

@@ -121,7 +121,7 @@ func (r *PostRepository) GetCategoryIDs(postID int) ([]int, error) {
 
 func (r *PostRepository) List(filterType string, category string, currentUserID int, page int) ([]models.PostSummary, bool, error) {
 	base := `
-SELECT p.id, p.title, p.content, p.user_id, u.username, p.created_at, p.updated_at,
+SELECT p.id, p.title, p.content, p.user_id, u.username, u.avatar, p.created_at, p.updated_at,
        COALESCE(SUM(CASE WHEN pr.value = 1 THEN 1 ELSE 0 END), 0) AS likes,
        COALESCE(SUM(CASE WHEN pr.value = -1 THEN 1 ELSE 0 END), 0) AS dislikes,
        (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) AS comment_count
@@ -155,7 +155,7 @@ LEFT JOIN post_reactions pr ON pr.post_id = p.id
 	if len(conditions) > 0 {
 		query += " WHERE " + strings.Join(conditions, " AND ")
 	}
-	query += ` GROUP BY p.id, p.title, p.content, p.user_id, u.username, p.created_at, p.updated_at ORDER BY p.created_at DESC`
+	query += ` GROUP BY p.id, p.title, p.content, p.user_id, u.username, u.avatar, p.created_at, p.updated_at ORDER BY p.created_at DESC`
 
 	offset := (page - 1) * pageSize
 	query += ` LIMIT ? OFFSET ?`
@@ -171,7 +171,7 @@ LEFT JOIN post_reactions pr ON pr.post_id = p.id
 	for rows.Next() {
 		var p models.PostSummary
 		var updatedAt sql.NullTime
-		if err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.AuthorID, &p.AuthorName, &p.CreatedAt, &updatedAt, &p.Likes, &p.Dislikes, &p.CommentCount); err != nil {
+		if err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.AuthorID, &p.AuthorName, &p.AuthorAvatar, &p.CreatedAt, &updatedAt, &p.Likes, &p.Dislikes, &p.CommentCount); err != nil {
 			return nil, false, err
 		}
 		if updatedAt.Valid {
@@ -208,7 +208,7 @@ LEFT JOIN post_reactions pr ON pr.post_id = p.id
 func (r *PostRepository) Search(q string, page int) ([]models.PostSummary, bool, error) {
 	like := "%" + q + "%"
 	query := `
-SELECT p.id, p.title, p.content, p.user_id, u.username, p.created_at, p.updated_at,
+SELECT p.id, p.title, p.content, p.user_id, u.username, u.avatar, p.created_at, p.updated_at,
        COALESCE(SUM(CASE WHEN pr.value = 1 THEN 1 ELSE 0 END), 0) AS likes,
        COALESCE(SUM(CASE WHEN pr.value = -1 THEN 1 ELSE 0 END), 0) AS dislikes,
        (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) AS comment_count
@@ -216,7 +216,7 @@ FROM posts p
 JOIN users u ON u.id = p.user_id
 LEFT JOIN post_reactions pr ON pr.post_id = p.id
 WHERE p.title LIKE ? OR p.content LIKE ?
-GROUP BY p.id, p.title, p.content, p.user_id, u.username, p.created_at, p.updated_at
+GROUP BY p.id, p.title, p.content, p.user_id, u.username, u.avatar, p.created_at, p.updated_at
 ORDER BY p.created_at DESC
 LIMIT ? OFFSET ?`
 
@@ -231,7 +231,7 @@ LIMIT ? OFFSET ?`
 	for rows.Next() {
 		var p models.PostSummary
 		var updatedAt sql.NullTime
-		if err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.AuthorID, &p.AuthorName, &p.CreatedAt, &updatedAt, &p.Likes, &p.Dislikes, &p.CommentCount); err != nil {
+		if err := rows.Scan(&p.ID, &p.Title, &p.Content, &p.AuthorID, &p.AuthorName, &p.AuthorAvatar, &p.CreatedAt, &updatedAt, &p.Likes, &p.Dislikes, &p.CommentCount); err != nil {
 			return nil, false, err
 		}
 		if updatedAt.Valid {
@@ -269,7 +269,7 @@ func (r *PostRepository) Get(postID int) (models.PostSummary, error) {
 	var p models.PostSummary
 	var updatedAt sql.NullTime
 	query := `
-SELECT p.id, p.title, p.content, p.user_id, u.username, p.created_at, p.updated_at,
+SELECT p.id, p.title, p.content, p.user_id, u.username, u.avatar, p.created_at, p.updated_at,
        COALESCE(SUM(CASE WHEN pr.value = 1 THEN 1 ELSE 0 END), 0) AS likes,
        COALESCE(SUM(CASE WHEN pr.value = -1 THEN 1 ELSE 0 END), 0) AS dislikes,
        (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) AS comment_count
@@ -277,8 +277,8 @@ FROM posts p
 JOIN users u ON u.id = p.user_id
 LEFT JOIN post_reactions pr ON pr.post_id = p.id
 WHERE p.id = ?
-GROUP BY p.id, p.title, p.content, p.user_id, u.username, p.created_at, p.updated_at`
-	if err := r.DB.QueryRow(query, postID).Scan(&p.ID, &p.Title, &p.Content, &p.AuthorID, &p.AuthorName, &p.CreatedAt, &updatedAt, &p.Likes, &p.Dislikes, &p.CommentCount); err != nil {
+GROUP BY p.id, p.title, p.content, p.user_id, u.username, u.avatar, p.created_at, p.updated_at`
+	if err := r.DB.QueryRow(query, postID).Scan(&p.ID, &p.Title, &p.Content, &p.AuthorID, &p.AuthorName, &p.AuthorAvatar, &p.CreatedAt, &updatedAt, &p.Likes, &p.Dislikes, &p.CommentCount); err != nil {
 		return p, err
 	}
 	if updatedAt.Valid {

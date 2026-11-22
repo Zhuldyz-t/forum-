@@ -28,10 +28,14 @@
 <section class="card profile-card">
     <div class="profile-inner">
         <div class="profile-avatar-sq">
+            {{if .CurrentUser.Avatar}}
+            <img src="/uploads/avatars/{{.CurrentUser.Avatar}}" alt="Фото {{.CurrentUser.Username}}">
+            {{else}}
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="12" cy="8" r="4" fill="#d1d5db"/>
                 <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#d1d5db"/>
             </svg>
+            {{end}}
         </div>
         <div class="profile-info">
             <p class="profile-username">{{.CurrentUser.Username}}</p>
@@ -53,6 +57,28 @@
             </div>
         </div>
     </div>
+</section>
+
+<section class="card profile-card profile-edit">
+    <h2 class="profile-edit-title">Редактировать профиль</h2>
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+    {{if .Success}}<p class="success">{{.Success}}</p>{{end}}
+    <form action="/profile/update" method="POST" enctype="multipart/form-data" class="auth-form">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        <label>Имя пользователя
+            <input type="text" name="username" value="{{.CurrentUser.Username}}" required minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]+">
+        </label>
+        <label>Фото профиля
+            <input type="file" name="avatar" accept="image/jpeg,image/png,image/gif,image/webp">
+            <span class="form-hint">JPG, PNG, GIF или WEBP, до 2 МБ</span>
+        </label>
+        {{if .CurrentUser.Avatar}}
+        <label class="checkbox-label">
+            <input type="checkbox" name="remove_avatar" value="1"> Удалить текущее фото
+        </label>
+        {{end}}
+        <button type="submit" class="btn">Сохранить</button>
+    </form>
 </section>
 </div>
 </main>

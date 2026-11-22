@@ -15,8 +15,8 @@ func (r *UserRepository) Create(email, username, passwordHash string) error {
 
 func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
 	user := &models.User{}
-	err := r.DB.QueryRow(`SELECT id, email, username, password_hash, created_at FROM users WHERE email = ?`, email).
-		Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.CreatedAt)
+	err := r.DB.QueryRow(`SELECT id, email, username, password_hash, avatar, created_at FROM users WHERE email = ?`, email).
+		Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.Avatar, &user.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -25,8 +25,8 @@ func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
 
 func (r *UserRepository) GetByID(id int) (*models.User, error) {
 	user := &models.User{}
-	err := r.DB.QueryRow(`SELECT id, email, username, password_hash, created_at FROM users WHERE id = ?`, id).
-		Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.CreatedAt)
+	err := r.DB.QueryRow(`SELECT id, email, username, password_hash, avatar, created_at FROM users WHERE id = ?`, id).
+		Scan(&user.ID, &user.Email, &user.Username, &user.PasswordHash, &user.Avatar, &user.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -55,4 +55,14 @@ func (r *UserRepository) UsernameExists(username string) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (r *UserRepository) UpdateUsername(id int, username string) error {
+	_, err := r.DB.Exec(`UPDATE users SET username = ? WHERE id = ?`, username, id)
+	return err
+}
+
+func (r *UserRepository) UpdateAvatar(id int, avatar string) error {
+	_, err := r.DB.Exec(`UPDATE users SET avatar = ? WHERE id = ?`, avatar, id)
+	return err
 }

@@ -80,6 +80,7 @@ func RunMigrations(db *sql.DB) error {
 
 	// Idempotent schema evolution: ignore error if column already exists.
 	_, _ = db.Exec(`ALTER TABLE posts ADD COLUMN updated_at DATETIME`)
+	_, _ = db.Exec(`ALTER TABLE users ADD COLUMN avatar TEXT NOT NULL DEFAULT ''`)
 
 	return nil
 }
