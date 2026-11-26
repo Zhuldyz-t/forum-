@@ -43,3 +43,8 @@ func ValidateContent(content string, maxLen int) bool {
 	content = strings.TrimSpace(content)
 	return len(content) > 0 && len(content) <= maxLen
 }
+
+var usernamePrefixRegex = regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
+
+// ValidateUsernamePrefix checks the start of a username typed after «@».
+func ValidateUsernamePrefix(s string) bool { return usernamePrefixRegex.MatchString(s) }

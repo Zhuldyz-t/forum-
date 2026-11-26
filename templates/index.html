@@ -3,134 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "theme-init"}}
     <title>FORUM</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=9">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
     <link rel="manifest" href="/static/site.webmanifest">
 </head>
 <body>
-<header class="site-header">
-    <div class="container site-header-inner">
-        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
-        <nav class="nav-right">
-            {{if .CurrentUser}}
-                <a href="/profile" class="user-greeting">Привет, {{.CurrentUser.Username}}</a>
-                <a href="/post/create" class="btn secondary">Создать пост</a>
-                <form action="/logout" method="POST" class="inline-form"><input type="hidden" name="csrf_token" value="{{.CSRFToken}}"><button type="submit" class="btn">Выйти</button></form>
-            {{else}}
-                <a href="/login" class="btn secondary">Войти</a>
-                <a href="/register" class="btn">Регистрация</a>
-            {{end}}
-        </nav>
-    </div>
-</header>
+{{template "header" .}}
 <main class="page">
-<div class="container">
-<section class="card filters-section">
-    <h2 class="filters-title">Фильтры</h2>
+<div class="container home-layout">
 
-    <form action="/posts/search" method="GET" class="search-form">
-        <input type="text" name="q" value="{{.SearchQuery}}" placeholder="Поиск постов...">
-        <button type="submit" class="btn small">Поиск</button>
-    </form>
+    <aside class="home-left">
+        <nav class="card cat-card" aria-label="Категории">
+            <p class="widget-title">Категории</p>
+            <ul class="cat-list">
+                <li><a href="{{.CategoryURL ""}}" class="cat-link{{if not .SelectedCat}} is-active{{end}}">{{template "cat-icon" "Все"}}<span class="cat-name">Все</span><span class="cat-count">{{.TotalPosts}}</span></a></li>
+                {{range .Categories}}
+                <li><a href="{{$.CategoryURL .Name}}" class="cat-link{{if eq $.SelectedCat .Name}} is-active{{end}}">{{template "cat-icon" .Name}}<span class="cat-name">{{.Name}}</span><span class="cat-count">{{.Count}}</span></a></li>
+                {{end}}
+            </ul>
+        </nav>
+    </aside>
 
-    <div class="filters" style="margin-top: 16px;">
-        <a href="/" class="filter-pill {{if and (eq .SelectedCat "") (eq .Selected "")}}active{{end}}">
-            Все
-        </a>
-
-        {{range .Categories}}
-            <a href="/?category={{.Name}}" class="filter-pill {{if eq $.SelectedCat .Name}}active{{end}}">
-                {{.Name}}
-            </a>
-        {{end}}
+    <section class="home-feed" aria-label="Лента">
+        <form class="feed-search" action="/" method="GET" role="search" data-feed-search>
+            {{if .SelectedCat}}<input type="hidden" name="category" value="{{.SelectedCat}}">{{end}}
+            {{if ne .Sort "new"}}<input type="hidden" name="sort" value="{{.Sort}}">{{end}}
+            {{if .Filter}}<input type="hidden" name="filter" value="{{.Filter}}">{{end}}
+            {{if eq .FeedTab "following"}}<input type="hidden" name="feed" value="following">{{end}}
+            <svg class="icon feed-search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" name="q" value="{{.SearchQuery}}" placeholder="Поиск по постам" autocomplete="off" aria-label="Поиск по постам" data-feed-input>
+            <button type="button" class="feed-search-clear" data-feed-clear title="Очистить" aria-label="Очистить поиск"{{if not .SearchQuery}} hidden{{end}}>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </form>
 
         {{if .CurrentUser}}
-            <a href="/?filter=my_posts" class="filter-pill {{if eq .Selected "my_posts"}}active{{end}}">
-                Мои посты
-            </a>
-            <a href="/?filter=liked" class="filter-pill {{if eq .Selected "liked"}}active{{end}}">
-                Понравившиеся
-            </a>
+        <nav class="tabs feed-tabs" aria-label="Лента">
+            <a href="{{.FeedTabURL "all"}}" class="tab{{if ne .FeedTab "following"}} is-active{{end}}" data-feed-tab="all">Все посты</a>
+            <a href="{{.FeedTabURL "following"}}" class="tab{{if eq .FeedTab "following"}} is-active{{end}}" data-feed-tab="following">Подписки{{if .FollowsCount}} <span class="tab-count">{{.FollowsCount}}</span>{{end}}</a>
+        </nav>
         {{end}}
-    </div>
-</section>
 
-<section class="posts-list">
-    {{if .Posts}}
-        {{range .Posts}}
-        <article class="card post-card">
-            <div class="post-top">
-                <div>
-                    <h3 class="post-title">
-                        <a href="/post?id={{.ID}}">{{.Title}}</a>
-                    </h3>
-                    <p class="post-meta">
-                        {{if .AuthorAvatar}}<img class="avatar-sm" src="/uploads/avatars/{{.AuthorAvatar}}" alt="">{{else}}<span class="avatar-sm avatar-fallback">{{slice .AuthorName 0 1}}</span>{{end}}
-                        Автор: <strong>{{.AuthorName}}</strong> · {{.CreatedAt.Local.Format "02.01.2006 15:04"}}
-                    </p>
-                </div>
-            </div>
-
-            <p class="post-content-preview">{{.Content}}</p>
-
-            {{if .Categories}}
-            <div class="post-categories">
-                {{range .Categories}}
-                    <span class="category-badge">{{.}}</span>
+        <div class="feed-toolbar">
+            {{if ne .FeedTab "following"}}
+            <div class="segmented" role="tablist" aria-label="Сортировка">
+                {{range .Sorts}}
+                <a href="{{$.SortURL .Key}}" class="segment{{if eq $.Sort .Key}} is-active{{end}}" role="tab" aria-selected="{{if eq $.Sort .Key}}true{{else}}false{{end}}" data-sort="{{.Key}}">{{.Label}}</a>
                 {{end}}
             </div>
             {{end}}
+            {{if .Filter}}
+            <a href="{{.ClearFilterURL}}" class="filter-chip" title="Сбросить фильтр">{{.FilterLabel}}
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </a>
+            {{end}}
+        </div>
 
-            <div class="post-actions">
-                <div class="post-stats">
-                    {{if $.CurrentUser}}
-                    <form action="/reaction/post" method="POST" class="inline-form">
-                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
-                        <input type="hidden" name="post_id" value="{{.ID}}">
-                        <input type="hidden" name="value" value="1">
-                        <button class="btn small" type="submit">👍 {{.Likes}}</button>
-                    </form>
-                    <form action="/reaction/post" method="POST" class="inline-form">
-                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
-                        <input type="hidden" name="post_id" value="{{.ID}}">
-                        <input type="hidden" name="value" value="-1">
-                        <button class="btn secondary small" type="submit">👎 {{.Dislikes}}</button>
-                    </form>
-                    {{else}}
-                    <span>👍 {{.Likes}}</span>
-                    <span>👎 {{.Dislikes}}</span>
-                    {{end}}
-                    <span>💬 {{.CommentCount}}</span>
-                </div>
+        <div class="feed" data-feed
+             data-category="{{.SelectedCat}}" data-sort="{{.Sort}}" data-filter="{{.Filter}}" data-tab="{{.FeedTab}}" data-q="{{.SearchQuery}}" data-page="1">
+            {{template "feed-items" dict "Posts" .Posts "Page" . "First" true}}
+        </div>
+        <button type="button" class="btn secondary feed-more" data-feed-more{{if not .HasNext}} hidden{{end}}>Показать ещё</button>
+    </section>
 
-
-                <a class="btn secondary" href="/post?id={{.ID}}">Перейти к комментариям</a>
-            </div>
-        </article>
-        {{end}}
-    {{else}}
-        <section class="card empty-state">
-            <h3>Пока постов нет</h3>
-            <p>Стань первым, кто начнет обсуждение.</p>
-            {{if .CurrentUser}}
-                <a href="/post/create" class="btn">Создать пост</a>
+    <aside class="home-right">
+        <section class="card widget">
+            <p class="widget-title">Популярное за неделю</p>
+            {{if .Popular}}
+            <ol class="popular-list">
+                {{range .Popular}}
+                <li>
+                    <a href="/post?id={{.ID}}" class="popular-item">
+                        <span class="popular-title">{{.Title}}</span>
+                        <span class="popular-likes" title="Лайков">{{template "icon-like"}}{{.Likes}}</span>
+                    </a>
+                </li>
+                {{end}}
+            </ol>
             {{else}}
-                <a href="/login" class="btn secondary">Войти и написать</a>
+            <p class="widget-empty">За последние 7 дней лайков ещё не было</p>
             {{end}}
         </section>
-    {{end}}
-</section>
 
-{{if or .PrevURL .NextURL}}
-<div class="pagination-bar">
-    {{if .PrevURL}}<a href="{{.PrevURL}}" class="btn secondary">&#8592; Предыдущий</a>{{end}}
-    {{if .NextURL}}<a href="{{.NextURL}}" class="btn">Следующий &#8594;</a>{{end}}
-</div>
-{{end}}
+        <section class="card widget">
+            <p class="widget-title">Активные авторы</p>
+            {{if .Authors}}
+            <ul class="author-list">
+                {{range .Authors}}
+                <li>
+                    <div class="author-row">
+                        <a href="/user/{{.ID}}" class="author-item">
+                            {{if .Avatar}}<img class="avatar avatar-32" src="/uploads/avatars/{{.Avatar}}" alt="" loading="lazy">{{else}}<span class="avatar avatar-32 avatar-fallback" style="background: {{.AvatarColor}}">{{.Initial}}</span>{{end}}
+                            <span class="author-text"><span class="author-name">{{.Username}}</span><span class="author-posts">{{.Posts}} {{if eq .Posts 1}}пост{{else}}постов{{end}}</span></span>
+                        </a>
+                        {{if not (and $.CurrentUser (eq $.CurrentUser.ID .ID))}}
+                        {{template "follow-btn" dict "ID" .ID "Following" (index $.FollowingSet .ID) "Page" $ "Small" true}}
+                        {{end}}
+                    </div>
+                </li>
+                {{end}}
+            </ul>
+            {{else}}
+            <p class="widget-empty">Пока никто ничего не написал</p>
+            {{end}}
+        </section>
+
+        <section class="card widget">
+            <p class="widget-title">Топ по репутации</p>
+            {{if .TopRep}}
+            <ol class="rep-list">
+                {{range .TopRep}}
+                <li>
+                    <a href="/user/{{.ID}}" class="author-item">
+                        {{if .Avatar}}<img class="avatar avatar-32" src="/uploads/avatars/{{.Avatar}}" alt="" loading="lazy">{{else}}<span class="avatar avatar-32 avatar-fallback" style="background: {{.AvatarColor}}">{{.Initial}}</span>{{end}}
+                        <span class="author-text"><span class="author-name">{{.Username}}</span>{{template "level-badge" .Level}}</span>
+                        <span class="rep-score" title="Репутация">{{.Reputation}}</span>
+                    </a>
+                </li>
+                {{end}}
+            </ol>
+            {{else}}
+            <p class="widget-empty">Пока ни у кого нет очков</p>
+            {{end}}
+        </section>
+
+        <section class="card widget">
+            <p class="widget-title">Статистика форума</p>
+            <dl class="forum-stats">
+                <div><dt>Пользователей</dt><dd>{{.Stats.Users}}</dd></div>
+                <div><dt>Постов</dt><dd>{{.Stats.Posts}}</dd></div>
+                <div><dt>Комментариев</dt><dd>{{.Stats.Comments}}</dd></div>
+            </dl>
+        </section>
+    </aside>
 </div>
 </main>
+{{template "page-end" .}}
 </body>
 </html>

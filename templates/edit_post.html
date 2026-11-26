@@ -3,50 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "theme-init"}}
     <title>Редактировать пост</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=9">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
     <link rel="manifest" href="/static/site.webmanifest">
 </head>
 <body>
-<header class="site-header">
-    <div class="container site-header-inner">
-        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
-        <nav class="nav-right"><a href="/post?id={{.PostID}}" class="btn secondary">Назад</a></nav>
-    </div>
-</header>
+{{template "header" .}}
 <main class="page">
 <div class="container">
 <section class="card form-card">
     <h1 class="form-title">Редактировать пост</h1>
     {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
-    <form action="/post/edit?id={{.PostID}}" method="POST" class="auth-form">
-        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-        <label>Название<input type="text" name="title" value="{{.Title}}" placeholder="Заголовок поста" required></label>
-        <label>Контент<textarea name="content" rows="8" placeholder="Содержимое поста" required>{{.Content}}</textarea></label>
-        {{if .Categories}}
-        <div class="form-group">
-            <p class="form-label">Категории</p>
-            <div class="categories-grid">
-                {{range .Categories}}
-                <label class="category-check">
-                    <input type="checkbox" name="categories" value="{{.ID}}"
-                        {{if index $.SelectedIDs .ID}}checked{{end}}>
-                    {{.Name}}
-                </label>
-                {{end}}
-            </div>
-        </div>
-        {{end}}
-        <div class="form-actions">
-            <a href="/post?id={{.PostID}}" class="btn secondary">Отмена</a>
-            <button type="submit" class="btn">Сохранить</button>
-        </div>
-    </form>
+    {{template "post-form" dict "Page" . "Action" (printf "/post/edit?id=%d" .PostID) "Submit" "Сохранить" "Cancel" (printf "/post?id=%d" .PostID) "Image" .ImagePath}}
 </section>
 </div>
 </main>
+{{template "page-end" .}}
 </body>
 </html>

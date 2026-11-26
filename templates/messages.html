@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "theme-init"}}
+    <title>Сообщения</title>
+    <link rel="stylesheet" href="/static/style.css?v=9">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+</head>
+<body>
+{{template "header" .}}
+<main class="page messages-page">
+<div class="container">
+<div class="card chat-shell{{if .Partner}} has-active{{end}}" data-chat-shell data-me="{{.CurrentUser.ID}}" data-csrf="{{.CSRFToken}}">
+    <aside class="chat-list-pane" aria-label="Диалоги">
+        <div class="chat-list-head"><h1 class="chat-title">Сообщения</h1></div>
+        <nav class="chat-list" data-chat-list>{{template "conversation-list" dict "Conversations" .Conversations "ActiveID" .ActiveID "Me" .CurrentUser.ID}}</nav>
+    </aside>
+
+    {{if .Partner}}
+    <section class="chat-pane" data-chat data-conv="{{.ActiveID}}" data-partner="{{.Partner.ID}}" data-me="{{.CurrentUser.ID}}" data-csrf="{{.CSRFToken}}">
+        <header class="chat-head">
+            <a href="/messages" class="round-btn chat-back" title="К диалогам" aria-label="К диалогам">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+            </a>
+            <a href="/user/{{.Partner.ID}}" class="chat-peer">
+                <span class="avatar-wrap">
+                    {{if .Partner.Avatar}}<img class="avatar avatar-40" src="/uploads/avatars/{{.Partner.Avatar}}" alt="">{{else}}<span class="avatar avatar-40 avatar-fallback" style="background: {{.Partner.AvatarColor}}">{{.Partner.Initial}}</span>{{end}}
+                    <span class="presence-dot{{if .Partner.Online}} is-online{{end}}" data-presence-dot="{{.Partner.ID}}"></span>
+                </span>
+                <span class="chat-peer-text">
+                    <span class="chat-peer-name">{{.Partner.Username}}</span>
+                    <span class="chat-status" data-chat-status>{{.Partner.Status}}</span>
+                </span>
+            </a>
+        </header>
+        <div class="chat-messages" data-chat-messages aria-live="polite">
+            <p class="chat-loader" data-chat-loader hidden>Загрузка…</p>
+            <p class="chat-empty" data-chat-empty{{if .ActiveID}} hidden{{end}}>Сообщений пока нет. Напишите первым!</p>
+        </div>
+        <form class="chat-composer" data-chat-form>
+            <textarea rows="1" maxlength="2000" placeholder="Сообщение…" title="Enter — отправить, Shift+Enter — новая строка" aria-label="Сообщение" data-chat-input></textarea>
+            <button type="submit" class="chat-send" title="Отправить" aria-label="Отправить">{{template "icon-send"}}</button>
+        </form>
+        <p class="chat-error" data-chat-error hidden></p>
+    </section>
+    {{else}}
+    <section class="chat-pane chat-pane-empty">
+        <div class="chat-placeholder">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z"/></svg>
+            <p>Выберите диалог слева или напишите кому-нибудь из профиля</p>
+        </div>
+    </section>
+    {{end}}
+</div>
+</div>
+</main>
+<script src="/static/messages.js?v=8"></script>
+{{template "page-end" .}}
+</body>
+</html>

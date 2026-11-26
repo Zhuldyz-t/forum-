@@ -3,20 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "theme-init"}}
     <title>Вход</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=9">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
     <link rel="manifest" href="/static/site.webmanifest">
 </head>
 <body>
-<header class="site-header">
-    <div class="container site-header-inner">
-        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
-        <nav class="nav-right"><a href="/register" class="btn">Регистрация</a></nav>
-    </div>
-</header>
+{{template "header" .}}
 <main class="page">
 <div class="container">
 <section class="card auth-card">
@@ -28,9 +24,11 @@
         <label>Пароль<input type="password" name="password" required></label>
         <button type="submit" class="btn">Войти</button>
     </form>
+    {{template "oauth-buttons" .}}
     <p class="auth-footer">Еще нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
 </section>
 </div>
 </main>
+{{template "page-end" .}}
 </body>
 </html>

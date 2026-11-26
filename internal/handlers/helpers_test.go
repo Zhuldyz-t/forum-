@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"forum/internal/view"
 	"html/template"
 	"os"
 	"path/filepath"
@@ -64,6 +65,7 @@ func setupTestDB() *sql.DB {
 			user_id INTEGER NOT NULL,
 			post_id INTEGER NOT NULL,
 			value INTEGER NOT NULL CHECK (value IN (1, -1)),
+			created_at DATETIME,
 			PRIMARY KEY (user_id, post_id),
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 			FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
@@ -91,7 +93,7 @@ func setupTestDB() *sql.DB {
 func setupTestTemplate() *template.Template {
 	cwd, _ := os.Getwd()
 	tmplPath := filepath.Join(filepath.Dir(filepath.Dir(cwd)), "templates", "*.html")
-	tmpl, _ := template.ParseGlob(tmplPath)
+	tmpl, _ := view.ParseGlob(tmplPath)
 	if tmpl == nil {
 		tmpl, _ = template.New("test").Parse("{{.Error}}")
 	}

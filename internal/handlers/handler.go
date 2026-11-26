@@ -8,6 +8,7 @@ import (
 	"errors"
 	"forum/internal/errorpage"
 	"forum/internal/models"
+	"forum/internal/realtime"
 	"forum/internal/repository"
 	"html/template"
 	"log"
@@ -22,13 +23,29 @@ type Handler struct {
 	DB            *sql.DB
 	Tmpl          *template.Template
 	Users         *repository.UserRepository
+	Photos        *repository.PhotoRepository
+	Follows       *repository.FollowRepository
+	Bookmarks     *repository.BookmarkRepository
+	Messages      *repository.MessageRepository
+	Polls         *repository.PollRepository
+	Achievements  *repository.AchievementRepository
+	Moderation    *repository.ModerationRepository
+	Hub           *realtime.Hub
+	Notifications *repository.NotificationRepository
 	Sessions      *repository.SessionRepository
 	Posts         *repository.PostRepository
 	Comments      *repository.CommentRepository
 	Reactions     *repository.ReactionRepository
 	Categories    *repository.CategoryRepository
 	SessionMaxAge time.Duration
-	CSRFSecret    []byte
+	// SecureCookies marks cookies Secure (set when serving over HTTPS).
+	SecureCookies bool
+	// OAuth: enabled providers, the site's public URL and the HTTP client
+	// for provider calls (see ConfigureOAuth).
+	OAuth      map[string]*OAuthProvider
+	BaseURL    string
+	HTTPClient *http.Client
+	CSRFSecret []byte
 }
 
 func NewHandler(db *sql.DB, tmpl *template.Template) *Handler {
@@ -36,10 +53,18 @@ func NewHandler(db *sql.DB, tmpl *template.Template) *Handler {
 	if _, err := rand.Read(secret); err != nil {
 		panic(err)
 	}
-	return &Handler{
+	h := &Handler{
 		DB:            db,
 		Tmpl:          tmpl,
 		Users:         &repository.UserRepository{DB: db},
+		Photos:        &repository.PhotoRepository{DB: db},
+		Follows:       &repository.FollowRepository{DB: db},
+		Bookmarks:     &repository.BookmarkRepository{DB: db},
+		Messages:      &repository.MessageRepository{DB: db},
+		Polls:         &repository.PollRepository{DB: db},
+		Achievements:  &repository.AchievementRepository{DB: db},
+		Moderation:    &repository.ModerationRepository{DB: db},
+		Notifications: &repository.NotificationRepository{DB: db},
 		Sessions:      &repository.SessionRepository{DB: db},
 		Posts:         &repository.PostRepository{DB: db},
 		Comments:      &repository.CommentRepository{DB: db},
@@ -48,6 +73,8 @@ func NewHandler(db *sql.DB, tmpl *template.Template) *Handler {
 		SessionMaxAge: 24 * time.Hour,
 		CSRFSecret:    secret,
 	}
+	h.wireRealtime()
+	return h
 }
 
 func (h *Handler) render(w http.ResponseWriter, name string, data any, status int) {
@@ -91,7 +118,27 @@ func (h *Handler) getCurrentUser(r *http.Request) (*models.User, error) {
 		_ = h.Sessions.DeleteByID(session.ID)
 		return nil, errors.New("session expired")
 	}
-	return h.Users.GetByID(session.UserID)
+	user, err := h.Users.GetByID(session.UserID)
+	if err != nil {
+		return nil, err
+	}
+	// A blocked user is treated as logged out everywhere.
+	if user.IsBanned() {
+		_ = h.Sessions.DeleteByID(session.ID)
+		return nil, errors.New("user is banned")
+	}
+	return user, nil
+}
+
+// CurrentUserID returns the logged-in user's id, or 0 (used by the rate limiter).
+func (h *Handler) CurrentUserID(r *http.Request) int {
+	if _, err := r.Cookie("session_id"); err != nil {
+		return 0 // no session cookie: skip the database
+	}
+	if u, err := h.getCurrentUser(r); err == nil {
+		return u.ID
+	}
+	return 0
 }
 
 func (h *Handler) mustAuth(w http.ResponseWriter, r *http.Request) (*models.User, bool) {
@@ -148,7 +195,7 @@ func (h *Handler) setCSRFCookie(w http.ResponseWriter, token string) {
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   h.SecureCookies,
 		SameSite: http.SameSiteStrictMode,
 		MaxAge:   int(h.SessionMaxAge.Seconds()),
 	})

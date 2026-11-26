@@ -1,0 +1,610 @@
+{{/* ─── Icons (inline SVG, inherit currentColor) ─────────────── */}}
+{{define "icon-like"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v11"/><path d="M15 5.9 14 10h5.8a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 18.4 21H7V10l4.3-7.5A2.1 2.1 0 0 1 15 5.9Z"/><path d="M3 10h4v11H3z"/></svg>{{end}}
+{{define "icon-dislike"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V3"/><path d="M9 18.1 10 14H4.2a2 2 0 0 1-2-2.3l1.4-7A2 2 0 0 1 5.6 3H17v11l-4.3 7.5A2.1 2.1 0 0 1 9 18.1Z"/><path d="M21 14h-4V3h4z"/></svg>{{end}}
+{{define "icon-comment"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></svg>{{end}}
+{{define "icon-image"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.3-4.3a2 2 0 0 0-2.8 0L5 20"/></svg>{{end}}
+{{define "icon-upload"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></svg>{{end}}
+{{define "icon-trash"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>{{end}}
+{{define "icon-pencil"}}<svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>{{end}}
+{{define "icon-heart"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 21.5l8.8-8.8a5 5 0 0 0 0-7.1Z"/></svg>{{end}}
+{{define "icon-users"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/></svg>{{end}}
+{{define "icon-bell"}}<svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>{{end}}
+{{define "icon-more"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/></svg>{{end}}
+{{define "icon-bookmark"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>{{end}}
+{{define "icon-reply"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 17 4 12l5-5"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>{{end}}
+{{define "icon-edit"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>{{end}}
+{{define "icon-bold"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h8a4 4 0 0 1 0 8H6z"/><path d="M6 12h9a4 4 0 0 1 0 8H6z"/></svg>{{end}}
+{{define "icon-italic"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 4h-9"/><path d="M14 20H5"/><path d="M15 4 9 20"/></svg>{{end}}
+{{define "icon-code"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>{{end}}
+{{define "icon-codeblock"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m10 10-2 2 2 2"/><path d="m14 14 2-2-2-2"/></svg>{{end}}
+{{define "icon-link"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>{{end}}
+{{define "icon-list"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>{{end}}
+{{define "icon-quote"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.76-2.02-2-2H4c-1.25 0-2 .75-2 1.97V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .01-1 1.03V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.76-2.02-2-2h-4c-1.25 0-2 .75-2 1.97V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>{{end}}
+{{define "icon-poll"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 17V11"/><path d="M13 17V7"/><path d="M18 17v-4"/></svg>{{end}}
+{{define "icon-message"}}<svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2z"/></svg>{{end}}
+{{define "icon-smile-plus"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M9 9h.01"/><path d="M15 9h.01"/><path d="M19 2v6"/><path d="M16 5h6"/></svg>{{end}}
+{{define "icon-send"}}<svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>{{end}}
+{{define "icon-check"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>{{end}}
+{{define "icon-flag"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22V4"/><path d="M4 4h13l-2 4 2 4H4"/></svg>{{end}}
+{{define "icon-eye-off"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.9 4.2A10 10 0 0 1 12 4c6.5 0 10 8 10 8a17 17 0 0 1-2.2 3.2"/><path d="M6.6 6.6C3.9 8.4 2 12 2 12s3.5 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="m2 2 20 20"/></svg>{{end}}
+{{define "icon-shield"}}<svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>{{end}}
+{{define "icon-file"}}<svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h5"/></svg>{{end}}
+
+{{/* ─── Post card (home feed, profile tabs) ─────────────────────
+     Call with: dict "Post" <PostSummary> "Page" $ ["Compact" true]
+     .Page must have CurrentUser and CSRFToken. The whole card opens the
+     post (the title link is stretched over it); author, tags, «Читать
+     дальше» and reactions sit above that link and work on their own. */}}
+{{define "post-card"}}
+{{$p := .Post}}
+<article class="card post-card{{if .Compact}} post-card-compact{{end}}" data-post-id="{{$p.ID}}">
+    <div class="post-card-head">
+        <a href="/user/{{$p.AuthorID}}" class="post-author raise">
+            {{if $p.AuthorAvatar}}<img class="avatar avatar-36" src="/uploads/avatars/{{$p.AuthorAvatar}}" alt="" loading="lazy">{{else}}<span class="avatar avatar-36 avatar-fallback" style="background: {{$p.AuthorColor}}">{{$p.AuthorInitial}}</span>{{end}}
+            <span class="post-author-name">{{$p.AuthorName}}</span>
+        </a>
+        {{template "level-badge" $p.AuthorLevel}}
+        <span class="dot" aria-hidden="true">·</span>
+        <time class="post-time" datetime="{{$p.CreatedAt.Format "2006-01-02T15:04:05Z07:00"}}" title="{{$p.CreatedAt.Local.Format "02.01.2006 15:04"}}">{{$p.Ago}}</time>
+        {{if $p.UpdatedAt}}<span class="edited-badge" title="Изменено {{$p.UpdatedAt.Local.Format "02.01.2006 15:04"}}">изменено</span>{{end}}
+        {{if .Page.CurrentUser}}{{template "post-menu" dict "Post" $p "Page" .Page}}{{end}}
+    </div>
+
+    <h3 class="post-title">
+        {{if $p.Solved}}<span class="solved-badge" title="Есть лучший ответ">{{template "icon-check"}}Решено</span>{{end}}
+        <a href="/post?id={{$p.ID}}" class="post-link">{{if $p.TitleHL}}{{$p.TitleHL}}{{else}}{{$p.Title}}{{end}}</a>
+    </h3>
+
+    <p class="post-content-preview">{{if $p.ContentHL}}{{$p.ContentHL}}{{else}}{{$p.Plain}}{{end}}</p>
+    {{if $p.IsLong}}<a href="/post?id={{$p.ID}}" class="read-more raise">Читать дальше</a>{{end}}
+
+    {{if $p.HasPoll}}<span class="poll-badge">{{template "icon-poll"}}Опрос</span>{{end}}
+    {{if $p.ImagePath}}<img class="post-card-image" src="/uploads/posts/{{$p.ImagePath}}" alt="" loading="lazy">{{end}}
+
+    {{if $p.Categories}}
+    <div class="post-categories">
+        {{range $p.Categories}}<a href="/?category={{.}}" class="category-badge raise">{{.}}</a>{{end}}
+    </div>
+    {{end}}
+
+    <div class="post-card-foot">
+        {{template "reactions" dict "Post" $p "Page" .Page}}
+        <span class="react-stat" title="Комментарии">{{template "icon-comment"}}<span>{{$p.CommentCount}}</span></span>
+        {{template "bookmark-btn" dict "Post" $p "Page" .Page}}
+    </div>
+</article>
+{{end}}
+
+{{/* «⋮» menu for the author's own post. Call with: dict "Post" "Page". */}}
+{{define "post-menu"}}
+{{$me := .Page.CurrentUser}}{{$own := eq $me.ID .Post.AuthorID}}
+<div class="kebab raise" data-menu>
+    <button type="button" class="kebab-btn" data-menu-toggle aria-haspopup="true" aria-expanded="false" title="Действия" aria-label="Действия с постом">{{template "icon-more"}}</button>
+    <div class="menu" data-menu-list hidden>
+        {{if $own}}
+        <a href="/post/edit?id={{.Post.ID}}" class="menu-item">{{template "icon-edit"}}Редактировать</a>
+        <form action="/post/delete" method="POST" data-confirm="Удалить этот пост?" data-confirm-text="Пост, его картинка и все комментарии будут удалены без возможности восстановления.">
+            <input type="hidden" name="csrf_token" value="{{.Page.CSRFToken}}">
+            <input type="hidden" name="post_id" value="{{.Post.ID}}">
+            <button type="submit" class="menu-item is-danger">{{template "icon-trash"}}Удалить</button>
+        </form>
+        {{else}}
+        <button type="button" class="menu-item" data-report="post" data-target="{{.Post.ID}}" data-csrf="{{.Page.CSRFToken}}">{{template "icon-flag"}}Пожаловаться</button>
+        {{end}}
+        {{if $me.IsModerator}}
+        <p class="menu-label">Модерация</p>
+        <form action="/mod/post" method="POST">
+            <input type="hidden" name="csrf_token" value="{{.Page.CSRFToken}}">
+            <input type="hidden" name="post_id" value="{{.Post.ID}}">
+            <input type="hidden" name="action" value="{{if .Post.IsHidden}}unhide{{else}}hide{{end}}">
+            <button type="submit" class="menu-item">{{template "icon-eye-off"}}{{if .Post.IsHidden}}Вернуть пост{{else}}Скрыть пост{{end}}</button>
+        </form>
+        {{if not $own}}
+        <form action="/mod/post" method="POST" data-confirm="Удалить чужой пост?" data-confirm-text="Действие попадёт в журнал модерации.">
+            <input type="hidden" name="csrf_token" value="{{.Page.CSRFToken}}">
+            <input type="hidden" name="post_id" value="{{.Post.ID}}">
+            <input type="hidden" name="action" value="delete">
+            <button type="submit" class="menu-item is-danger">{{template "icon-trash"}}Удалить как модератор</button>
+        </form>
+        {{end}}
+        {{end}}
+    </div>
+</div>
+{{end}}
+
+{{/* Bookmark toggle. Call with: dict "Post" "Page". */}}
+{{define "bookmark-btn"}}
+{{if .Page.CurrentUser}}
+<button type="button" class="react-btn bookmark-btn raise{{if .Post.Bookmarked}} is-active{{end}}" data-bookmark="{{.Post.ID}}" data-csrf="{{.Page.CSRFToken}}"
+        aria-pressed="{{if .Post.Bookmarked}}true{{else}}false{{end}}" title="{{if .Post.Bookmarked}}Убрать из сохранённого{{else}}Сохранить{{end}}" aria-label="Сохранить пост">{{template "icon-bookmark"}}</button>
+{{else}}
+<a href="/login" class="react-btn bookmark-btn raise" title="Войдите, чтобы сохранять посты" aria-label="Сохранить пост">{{template "icon-bookmark"}}</a>
+{{end}}
+{{end}}
+
+{{/* ─── One comment with its replies (recursive) ───────────────
+     Call with: dict "C" <CommentView> "Page" <PostPageData>. */}}
+{{define "comment"}}
+{{$c := .C}}{{$page := .Page}}
+<div class="comment{{if $c.IsDeleted}} is-deleted{{end}}{{if $c.IsBest}} is-best{{end}}"{{if not .Pinned}} id="comment-{{$c.ID}}"{{end}} data-comment="{{$c.ID}}" data-depth="{{$c.Depth}}" data-author="{{$c.AuthorName}}">
+    <div class="comment-head">
+        {{if or $c.IsDeleted $c.HiddenForViewer}}
+        <span class="avatar avatar-32 avatar-ghost" aria-hidden="true"></span>
+        {{else}}
+        <a href="/user/{{$c.UserID}}" class="comment-avatar">{{if $c.AuthorAvatar}}<img class="avatar avatar-32" src="/uploads/avatars/{{$c.AuthorAvatar}}" alt="" loading="lazy">{{else}}<span class="avatar avatar-32 avatar-fallback" style="background: {{$c.AuthorColor}}">{{$c.AuthorInitial}}</span>{{end}}</a>
+        {{end}}
+        <div class="comment-meta">
+            {{if not (or $c.IsDeleted $c.HiddenForViewer)}}<a href="/user/{{$c.UserID}}" class="comment-author-name">{{$c.AuthorName}}</a>{{template "level-badge" $c.AuthorLevel}}{{end}}
+            <time class="comment-time" datetime="{{$c.CreatedAt.Format "2006-01-02T15:04:05Z07:00"}}" title="{{$c.CreatedAt.Local.Format "02.01.2006 15:04"}}">{{$c.Ago}}</time>
+            {{if and $c.UpdatedAt (not $c.IsDeleted)}}<span class="edited-badge" data-edited title="Изменено {{$c.UpdatedAt.Local.Format "02.01.2006 15:04"}}">изменено</span>{{end}}
+            {{if $c.IsBest}}<span class="best-label">{{template "icon-check"}}Лучший ответ</span>{{end}}
+        </div>
+        {{if and $page.CurrentUser (not $c.IsDeleted) (not $c.HiddenForViewer)}}
+        {{$own := eq $page.CurrentUser.ID $c.UserID}}
+        <div class="kebab" data-menu>
+            <button type="button" class="kebab-btn" data-menu-toggle aria-haspopup="true" aria-expanded="false" title="Действия" aria-label="Действия с комментарием">{{template "icon-more"}}</button>
+            <div class="menu" data-menu-list hidden>
+                {{if $own}}
+                <button type="button" class="menu-item" data-comment-edit>{{template "icon-edit"}}Редактировать</button>
+                <form action="/comment/delete" method="POST" data-confirm="Удалить комментарий?" data-confirm-text="{{if $c.Replies}}Ответы останутся, а вместо текста будет надпись «Комментарий удалён».{{else}}Комментарий будет удалён без возможности восстановления.{{end}}">
+                    <input type="hidden" name="csrf_token" value="{{$page.CSRFToken}}">
+                    <input type="hidden" name="comment_id" value="{{$c.ID}}">
+                    <input type="hidden" name="post_id" value="{{$c.PostID}}">
+                    <button type="submit" class="menu-item is-danger">{{template "icon-trash"}}Удалить</button>
+                </form>
+                {{else}}
+                <button type="button" class="menu-item" data-report="comment" data-target="{{$c.ID}}" data-csrf="{{$page.CSRFToken}}">{{template "icon-flag"}}Пожаловаться</button>
+                {{end}}
+                {{if $page.CurrentUser.IsModerator}}
+                <p class="menu-label">Модерация</p>
+                <form action="/mod/comment" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{$page.CSRFToken}}">
+                    <input type="hidden" name="comment_id" value="{{$c.ID}}">
+                    <input type="hidden" name="action" value="{{if $c.IsHidden}}unhide{{else}}hide{{end}}">
+                    <button type="submit" class="menu-item">{{template "icon-eye-off"}}{{if $c.IsHidden}}Вернуть комментарий{{else}}Скрыть комментарий{{end}}</button>
+                </form>
+                {{if not $own}}
+                <form action="/mod/comment" method="POST" data-confirm="Удалить чужой комментарий?" data-confirm-text="Действие попадёт в журнал модерации.">
+                    <input type="hidden" name="csrf_token" value="{{$page.CSRFToken}}">
+                    <input type="hidden" name="comment_id" value="{{$c.ID}}">
+                    <input type="hidden" name="action" value="delete">
+                    <button type="submit" class="menu-item is-danger">{{template "icon-trash"}}Удалить как модератор</button>
+                </form>
+                {{end}}
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+    </div>
+
+    {{if $c.IsDeleted}}
+    <p class="comment-deleted">Комментарий удалён</p>
+    {{else if $c.HiddenForViewer}}
+    <p class="comment-deleted">Комментарий скрыт модератором</p>
+    {{else}}
+    {{if $c.IsHidden}}<p class="hidden-note">{{template "icon-eye-off"}}Скрыт модератором — его видят только автор и модераторы</p>{{end}}
+    <div class="comment-body md" data-comment-body>{{$c.HTML}}</div>
+    <textarea class="comment-source" data-comment-source hidden aria-hidden="true" tabindex="-1">{{$c.Content}}</textarea>
+    <div class="comment-actions">
+        {{template "comment-reactions" dict "ID" $c.ID "Reactions" $c.Reactions "Page" $page}}
+        {{if and $page.CanMarkBest (ne $page.CurrentUser.ID $c.UserID)}}
+        <form action="/comment/best" method="POST" class="best-form">
+            <input type="hidden" name="csrf_token" value="{{$page.CSRFToken}}">
+            <input type="hidden" name="comment_id" value="{{$c.ID}}">
+            <button type="submit" class="react-btn best-btn{{if $c.IsBest}} is-active{{end}}" title="{{if $c.IsBest}}Снять отметку «Лучший ответ»{{else}}Отметить как лучший ответ{{end}}">{{template "icon-check"}}<span>{{if $c.IsBest}}Снять отметку{{else}}Лучший ответ{{end}}</span></button>
+        </form>
+        {{end}}
+        {{if $page.CurrentUser}}
+        <button type="button" class="react-btn comment-reply-btn" data-reply>{{template "icon-reply"}}<span>Ответить</span></button>
+        {{else}}
+        <a href="/login" class="react-btn comment-reply-btn">{{template "icon-reply"}}<span>Ответить</span></a>
+        {{end}}
+    </div>
+    {{if not .Pinned}}<div class="reply-slot" data-reply-slot></div>{{end}}
+    {{end}}
+
+    {{if $c.Replies}}
+    <button type="button" class="thread-toggle" data-thread-toggle aria-expanded="true" data-show="{{$c.RepliesLabel}}" data-hide="Скрыть ответы">Скрыть ответы</button>
+    <div class="comment-replies" data-replies>
+        {{range $c.Replies}}{{template "comment" dict "C" . "Page" $page}}{{end}}
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{/* ─── Markdown editor: toolbar, «Предпросмотр», @mentions ──────
+     Call with: dict "CSRF" "Name" "Value" "Placeholder". */}}
+{{define "md-editor"}}
+<div class="md-editor" data-md-editor data-csrf="{{.CSRF}}">
+    <div class="md-bar">
+        <div class="md-tabs" role="tablist">
+            <button type="button" class="md-tab is-active" data-md-tab="write" role="tab" aria-selected="true">Текст</button>
+            <button type="button" class="md-tab" data-md-tab="preview" role="tab" aria-selected="false">Предпросмотр</button>
+        </div>
+        <div class="md-tools" data-md-tools>
+            <button type="button" class="md-tool" data-md="bold" title="Жирный (Ctrl+B)" aria-label="Жирный">{{template "icon-bold"}}</button>
+            <button type="button" class="md-tool" data-md="italic" title="Курсив (Ctrl+I)" aria-label="Курсив">{{template "icon-italic"}}</button>
+            <button type="button" class="md-tool" data-md="code" title="Код в строке" aria-label="Код в строке">{{template "icon-code"}}</button>
+            <button type="button" class="md-tool" data-md="codeblock" title="Блок кода" aria-label="Блок кода">{{template "icon-codeblock"}}</button>
+            <button type="button" class="md-tool" data-md="link" title="Ссылка" aria-label="Ссылка">{{template "icon-link"}}</button>
+            <button type="button" class="md-tool" data-md="list" title="Список" aria-label="Список">{{template "icon-list"}}</button>
+            <button type="button" class="md-tool" data-md="quote" title="Цитата" aria-label="Цитата">{{template "icon-quote"}}</button>
+        </div>
+    </div>
+    <textarea name="{{.Name}}" rows="10" maxlength="10000" placeholder="{{.Placeholder}}" required data-md-input data-mentions>{{.Value}}</textarea>
+    <div class="md-preview md" data-md-preview hidden></div>
+    <p class="form-hint md-hint">Markdown: **жирный**, *курсив*, `код`, ```блок кода```, списки, [ссылки](https://…), &gt; цитаты, # заголовки. Упоминайте людей через @имя.</p>
+</div>
+{{end}}
+
+{{/* ─── Post form, shared by «Создать пост» and «Редактировать пост» ─
+     Call with: dict "Page" <Create/EditPostPageData> "Action" "Submit" "Cancel" ["Image" path]. */}}
+{{define "post-form"}}
+{{$d := .Page}}
+<form action="{{.Action}}" method="POST" enctype="multipart/form-data" class="auth-form post-form">
+    <input type="hidden" name="csrf_token" value="{{$d.CSRFToken}}">
+    <label>Заголовок<input type="text" name="title" value="{{$d.Title}}" placeholder="Кратко опишите тему поста" maxlength="200" required></label>
+    <div class="form-field">
+        <span class="form-label-text">Текст</span>
+        {{template "md-editor" dict "CSRF" $d.CSRFToken "Name" "content" "Value" $d.Content "Placeholder" "Раскройте тему поста подробнее"}}
+    </div>
+    <div class="image-field" data-image-field>
+        <span class="form-label-text">Картинка <span class="form-hint">необязательно · JPG, PNG, GIF или WEBP, до 10 МБ</span></span>
+        <input type="file" name="image" id="post-image" class="file-input-hidden" accept="image/jpeg,image/png,image/gif,image/webp" data-image-input>
+        <input type="hidden" name="remove_image" value="0" data-image-removed>
+        <label for="post-image" class="image-drop" data-image-pick{{if .Image}} hidden{{end}}>
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-4.3-4.3a2 2 0 0 0-2.8 0L5 20"/></svg>
+            <span>Добавить картинку</span>
+        </label>
+        <div class="image-preview" data-image-preview{{if not .Image}} hidden{{end}}>
+            <img alt="Превью картинки"{{if .Image}} src="/uploads/posts/{{.Image}}"{{end}}>
+            <button type="button" class="image-remove" data-image-remove title="Убрать картинку" aria-label="Убрать картинку">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <p class="upload-error" data-image-error hidden></p>
+    </div>
+    {{if .Poll}}{{$pf := .Poll}}
+    <div class="poll-builder" data-poll-builder>
+        <label class="poll-toggle"><input type="checkbox" name="poll_enabled" value="1" data-poll-enable{{if $pf.Enabled}} checked{{end}}>{{template "icon-poll"}}<span>Добавить опрос</span></label>
+        <div class="poll-fields" data-poll-fields{{if not $pf.Enabled}} hidden{{end}}>
+            <input type="text" name="poll_question" value="{{$pf.Question}}" placeholder="Вопрос" maxlength="200" aria-label="Вопрос опроса">
+            <div class="poll-option-list" data-poll-options>
+                {{range $pf.OptionList}}
+                <div class="poll-option-row">
+                    <input type="text" name="poll_option" value="{{.}}" placeholder="Вариант ответа" maxlength="100" aria-label="Вариант ответа">
+                    <button type="button" class="poll-option-remove" data-poll-remove title="Убрать вариант" aria-label="Убрать вариант"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                </div>
+                {{end}}
+            </div>
+            <button type="button" class="btn secondary small poll-add" data-poll-add>Добавить вариант</button>
+            <div class="poll-settings">
+                <label class="poll-check"><input type="checkbox" name="poll_multiple" value="1"{{if $pf.Multiple}} checked{{end}}><span>Несколько ответов</span></label>
+                <label class="poll-ends"><span>Окончание (необязательно)</span><input type="datetime-local" name="poll_ends" value="{{$pf.Ends}}"></label>
+            </div>
+            <p class="form-hint">От 2 до 6 вариантов. Голосовать можно один раз.</p>
+        </div>
+    </div>
+    {{end}}
+    <fieldset class="form-group">
+        <legend>Категории</legend>
+        <div class="category-list">
+            {{range $d.Categories}}
+            <label class="category-item"><input type="checkbox" name="categories" value="{{.ID}}" {{if index $d.SelectedIDs .ID}}checked{{end}}><span>{{.Name}}</span></label>
+            {{end}}
+        </div>
+    </fieldset>
+    <div class="form-actions">
+        <a href="{{.Cancel}}" class="btn secondary">Отмена</a>
+        <button type="submit" class="btn">{{.Submit}}</button>
+    </div>
+</form>
+{{end}}
+
+{{/* Like/dislike controls. Logged in: forms that site.js sends with fetch
+     (and that still work without JS). Guests: links to the login page. */}}
+{{define "reactions"}}
+{{$p := .Post}}
+<div class="reactions raise" data-reactions>
+    {{if .Page.CurrentUser}}
+    <form action="/reaction/post" method="POST" class="react-form" data-react-form>
+        <input type="hidden" name="csrf_token" value="{{.Page.CSRFToken}}">
+        <input type="hidden" name="post_id" value="{{$p.ID}}">
+        <input type="hidden" name="value" value="1">
+        <button type="submit" class="react-btn react-like{{if eq $p.MyReaction 1}} is-active{{end}}" title="Нравится" aria-label="Нравится" aria-pressed="{{if eq $p.MyReaction 1}}true{{else}}false{{end}}">{{template "icon-like"}}<span data-count>{{$p.Likes}}</span></button>
+    </form>
+    <form action="/reaction/post" method="POST" class="react-form" data-react-form>
+        <input type="hidden" name="csrf_token" value="{{.Page.CSRFToken}}">
+        <input type="hidden" name="post_id" value="{{$p.ID}}">
+        <input type="hidden" name="value" value="-1">
+        <button type="submit" class="react-btn react-dislike{{if eq $p.MyReaction -1}} is-active{{end}}" title="Не нравится" aria-label="Не нравится" aria-pressed="{{if eq $p.MyReaction -1}}true{{else}}false{{end}}">{{template "icon-dislike"}}<span data-count>{{$p.Dislikes}}</span></button>
+    </form>
+    {{else}}
+    <a href="/login" class="react-btn react-like" title="Войдите, чтобы оценить">{{template "icon-like"}}<span>{{$p.Likes}}</span></a>
+    <a href="/login" class="react-btn react-dislike" title="Войдите, чтобы оценить">{{template "icon-dislike"}}<span>{{$p.Dislikes}}</span></a>
+    {{end}}
+</div>
+{{end}}
+
+{{/* ─── Feed fragment: post cards, or the empty state on the first page.
+     Call with: map Posts, Page (HomePageData), First (bool). Also returned
+     by /feed for «Показать ещё» and live search. */}}
+{{define "feed-items"}}
+{{$page := .Page}}
+{{range .Posts}}{{template "post-card" dict "Post" . "Page" $page}}{{end}}
+{{if and .First (not .Posts) (eq $page.FeedTab "following") (eq $page.FollowsCount 0)}}
+<div class="card feed-empty">
+    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/></svg>
+    <p class="feed-empty-title">Вы пока ни на кого не подписаны</p>
+    <p class="feed-empty-text">Подпишитесь на авторов, и их новые посты появятся здесь</p>
+    {{if $page.Suggestions}}
+    <div class="suggest">
+        <p class="widget-title">Кого почитать</p>
+        <ul class="suggest-list">
+            {{range $page.Suggestions}}
+            <li class="suggest-row">
+                <a href="/user/{{.ID}}" class="suggest-user">
+                    {{if .Avatar}}<img class="avatar avatar-36" src="/uploads/avatars/{{.Avatar}}" alt="" loading="lazy">{{else}}<span class="avatar avatar-36 avatar-fallback" style="background: {{.AvatarColor}}">{{.Initial}}</span>{{end}}
+                    <span class="suggest-text"><span class="suggest-name">{{.Username}}</span><span class="suggest-meta">{{.Posts}} {{if eq .Posts 1}}пост{{else}}постов{{end}}</span></span>
+                </a>
+                {{template "follow-btn" dict "ID" .ID "Following" (index $page.FollowingSet .ID) "Page" $page "Small" true}}
+            </li>
+            {{end}}
+        </ul>
+    </div>
+    {{end}}
+</div>
+{{else if and .First (not .Posts)}}
+<div class="card feed-empty">
+    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>
+    <p class="feed-empty-title">Здесь пока пусто</p>
+    {{if $page.SearchQuery}}<p class="feed-empty-text">По запросу «{{$page.SearchQuery}}» ничего не нашлось</p>{{end}}
+    {{if $page.CurrentUser}}<a href="/post/create" class="btn">Создать первый пост</a>{{end}}
+</div>
+{{end}}
+{{end}}
+
+{{/* ─── Category icon by name ──────────────────────────────── */}}
+{{define "cat-icon"}}<svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{{- if eq . "Все"}}<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+{{- else if eq . "Вопросы"}}<circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+{{- else if eq . "Новости"}}<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/>
+{{- else if eq . "Общее"}}<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+{{- else if eq . "Технологии"}}<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>
+{{- else if eq . "Учёба"}}<path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+{{- else if eq . "Хобби"}}<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2a10 10 0 0 0 0 20c.9 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1a1.6 1.6 0 0 1 1.6-1.7h2A5.6 5.6 0 0 0 22 11c0-5-4.5-9-10-9Z"/>
+{{- else if eq . "Другое"}}<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+{{- else}}<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8Z"/><circle cx="7" cy="7" r="1.5"/>
+{{- end}}</svg>{{end}}
+
+{{/* ─── Toast for one-shot success messages (.Success) ─────────── */}}
+{{define "toast"}}
+{{if .Success}}
+<div class="toast" role="status" data-autohide>
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+    <span>{{.Success}}</span>
+    <button type="button" class="toast-close" aria-label="Закрыть">&times;</button>
+</div>
+{{end}}
+{{end}}
+
+{{/* ─── Profile cover with its controls ─────────────────────────
+     Call with: dict "Page" $ "Edit" <bool>. .Page is ProfilePageData. The
+     owner gets the pencil on the profile page and the cover controls on the
+     edit page; other users get the follow button. */}}
+{{define "cover"}}
+{{$u := .Page.Profile}}
+<div class="profile-cover {{$u.CoverClass}}{{if .Edit}} profile-cover-edit{{end}}" data-cover data-csrf="{{.Page.CSRFToken}}"
+     style="{{if $u.CoverImage}}background-image: url('/uploads/covers/{{$u.CoverImage}}'){{end}}">
+    {{if and .Page.IsOwner (not .Edit)}}
+    {{/* On the profile page the owner only sees the pencil: the cover is
+         changed on the edit page it leads to. */}}
+    <a href="/profile/edit" class="icon-btn cover-btn profile-edit-btn" title="Редактировать профиль" aria-label="Редактировать профиль">{{template "icon-pencil"}}</a>
+    {{else if .Page.IsOwner}}
+    <div class="cover-controls">
+        <button type="button" class="cover-change-btn" data-cover-toggle aria-haspopup="true" aria-expanded="false" title="Изменить обложку" aria-label="Изменить обложку">
+            {{template "icon-image"}}<span>Изменить обложку</span>
+        </button>
+        <div class="cover-menu" data-cover-menu hidden>
+            <button type="button" class="cover-menu-item" data-cover-upload>{{template "icon-upload"}}Загрузить изображение</button>
+            <p class="cover-menu-hint">JPG, PNG или WEBP, до 10 МБ</p>
+            <p class="cover-menu-label">Готовые обложки</p>
+            <div class="cover-swatches">
+                {{range .Page.CoverPresets}}
+                <button type="button" class="cover-swatch cover-{{.Name}}{{if and (not $u.CoverImage) (eq .Name $u.CoverPreset)}} is-active{{end}}"
+                        data-preset="{{.Name}}" title="{{.Label}}" aria-label="{{.Label}}"></button>
+                {{end}}
+            </div>
+            <button type="button" class="cover-menu-item is-danger" data-cover-delete>{{template "icon-trash"}}Удалить обложку</button>
+        </div>
+        <input type="file" class="file-input-hidden" data-cover-input accept="image/jpeg,image/png,image/webp">
+    </div>
+    <span class="cover-spinner" aria-hidden="true"></span>
+    {{else if not .Edit}}
+    <div class="cover-follow">
+        <a href="{{if .Page.CurrentUser}}/messages?to={{$u.ID}}{{else}}/login{{end}}" class="btn secondary cover-message-btn">{{template "icon-message"}}<span>Написать</span></a>
+        {{template "follow-btn" dict "ID" $u.ID "Following" .Page.IsFollowing "Page" .Page}}
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{/* ─── Follow button ──────────────────────────────────────────
+     Call with: dict "ID" <user id> "Following" <bool> "Page" <page> ["Small" true].
+     Guests get a link to the login page. site.js toggles it with fetch. */}}
+{{define "follow-btn"}}
+{{if .Page.CurrentUser}}
+<button type="button" class="btn follow-btn{{if .Following}} is-following{{end}}{{if .Small}} small{{end}}"
+        data-follow="{{.ID}}" data-csrf="{{.Page.CSRFToken}}" aria-pressed="{{if .Following}}true{{else}}false{{end}}">
+    <span class="follow-text-follow">Подписаться</span>
+    <span class="follow-text-following">Вы подписаны</span>
+    <span class="follow-text-unfollow">Отписаться</span>
+</button>
+{{else}}
+<a href="/login" class="btn follow-btn{{if .Small}} small{{end}}"><span class="follow-text-follow">Подписаться</span></a>
+{{end}}
+{{end}}
+
+{{/* ─── Followers / following list (profile modal) ─────────────
+     Call with: map Users, Following (set of IDs the viewer follows),
+     Followers (bool), Page (CurrentUser, CSRFToken). */}}
+{{define "follow-list"}}
+{{$page := .Page}}{{$set := .Following}}
+{{range .Users}}
+<li class="follow-row" data-name="{{.Username}}">
+    <a href="/user/{{.ID}}" class="follow-user">
+        {{if .Avatar}}<img class="avatar avatar-36" src="/uploads/avatars/{{.Avatar}}" alt="" loading="lazy">{{else}}<span class="avatar avatar-36 avatar-fallback" style="background: {{.AvatarColor}}">{{.Initial}}</span>{{end}}
+        <span class="follow-user-text">
+            <span class="follow-user-name">{{.Username}}</span>
+            {{if .Bio}}<span class="follow-user-bio">{{.Bio}}</span>{{end}}
+        </span>
+    </a>
+    {{if not (and $page.CurrentUser (eq $page.CurrentUser.ID .ID))}}
+    {{template "follow-btn" dict "ID" .ID "Following" (index $set .ID) "Page" $page "Small" true}}
+    {{end}}
+</li>
+{{else}}
+<li class="follow-empty">{{if .Followers}}Подписчиков пока нет{{else}}Пока ни на кого не подписан(а){{end}}</li>
+{{end}}
+{{end}}
+
+{{/* ─── Notifications dropdown items ─────────────────────────── */}}
+{{define "notification-items"}}
+{{range .}}
+<a href="{{.URL}}" class="notif-item{{if not .IsRead}} is-unread{{end}}">
+    {{if eq .Type "achievement"}}
+    <span class="avatar avatar-36 notif-ach">{{template "ach-icon" .Achievement}}</span>
+    <span class="notif-text"><span><strong>{{.Text}}</strong></span><time class="notif-time">{{.Ago}}</time></span>
+    {{else}}
+    {{if .ActorAvatar}}<img class="avatar avatar-36" src="/uploads/avatars/{{.ActorAvatar}}" alt="" loading="lazy">{{else}}<span class="avatar avatar-36 avatar-fallback" style="background: {{.AvatarColor}}">{{.Initial}}</span>{{end}}
+    <span class="notif-text">
+        <span><strong>{{.ActorName}}</strong> {{.Text}}{{if .PostTitle}} «{{.PostTitle}}»{{end}}</span>
+        <time class="notif-time" datetime="{{.CreatedAt.Format "2006-01-02T15:04:05Z07:00"}}">{{.Ago}}</time>
+    </span>
+    {{end}}
+</a>
+{{else}}
+<p class="notif-empty">Пока нет уведомлений</p>
+{{end}}
+{{end}}
+
+{{/* ─── Comment reactions ─────────────────────────────────────
+     Six reactions drawn in SVG; colors come from --rx-* variables. */}}
+{{define "rx-icon"}}<svg class="rx-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+{{- if eq . "like"}}<path class="rx-like" d="M7 10v11H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h3Zm2 11V10l4.3-7.4c.5-.9 1.7-1.1 2.5-.5.6.5.9 1.3.7 2.1L15.6 9h5a2 2 0 0 1 2 2.3l-1.3 7.9A2 2 0 0 1 19.3 21H9Z"/>
+{{- else if eq . "heart"}}<path class="rx-heart" d="M12 21.4 3.5 13a5.3 5.3 0 0 1 7.5-7.5l1 1 1-1A5.3 5.3 0 0 1 20.5 13Z"/>
+{{- else if eq . "laugh"}}<circle class="rx-face" cx="12" cy="12" r="10"/><path class="rx-ink-line" d="M7.5 9.5q1.5-1.6 3 0M13.5 9.5q1.5-1.6 3 0"/><path class="rx-mouth" d="M6.5 13h11a5.5 5.5 0 0 1-11 0Z"/>
+{{- else if eq . "wow"}}<circle class="rx-face" cx="12" cy="12" r="10"/><circle class="rx-ink" cx="8.5" cy="9.5" r="1.4"/><circle class="rx-ink" cx="15.5" cy="9.5" r="1.4"/><ellipse class="rx-mouth" cx="12" cy="16" rx="2.4" ry="3"/>
+{{- else if eq . "sad"}}<circle class="rx-face" cx="12" cy="12" r="10"/><circle class="rx-ink" cx="8.5" cy="10" r="1.3"/><circle class="rx-ink" cx="15.5" cy="10" r="1.3"/><path class="rx-ink-line" d="M8 17q4-3.5 8 0"/><path class="rx-tear" d="M7.2 12.5c.8 1.2 1.3 2 1.3 2.6a1.3 1.3 0 0 1-2.6 0c0-.6.5-1.4 1.3-2.6Z"/>
+{{- else if eq . "fire"}}<path class="rx-fire" d="M12 2c.6 3.2 2.2 4.6 3.8 6.2C17.4 9.9 19 12 19 15a7 7 0 0 1-14 0c0-2.3 1-4.1 2.5-5.4.2 1.8 1 3 2.2 3.4C9.4 9.6 10.6 5.6 12 2Z"/><path class="rx-fire-core" d="M12 22a3.5 3.5 0 0 1-3.5-3.5c0-1.6 1-2.7 2-3.6.2 1 .8 1.6 1.5 1.8-.2-1.6.4-3 1.4-4.2.4 1.8 2.1 3 2.1 6a3.5 3.5 0 0 1-3.5 3.5Z"/>
+{{- end}}</svg>{{end}}
+
+{{/* Reactions bar under a comment. Call with: dict "ID" "Reactions" "Page". */}}
+{{define "comment-reactions"}}
+<div class="rx-bar" data-rx-bar="{{.ID}}">
+    {{range .Reactions}}
+    {{if $.Page.CurrentUser}}
+    <button type="button" class="rx-chip{{if .Mine}} is-mine{{end}}" data-rx="{{.Kind}}" title="{{.Who}}" aria-label="{{.Who}}" aria-pressed="{{if .Mine}}true{{else}}false{{end}}">{{template "rx-icon" .Kind}}<span>{{.Count}}</span></button>
+    {{else}}
+    <a href="/login" class="rx-chip" title="{{.Who}}" aria-label="{{.Who}}">{{template "rx-icon" .Kind}}<span>{{.Count}}</span></a>
+    {{end}}
+    {{end}}
+    {{if .Page.CurrentUser}}
+    <div class="rx-add">
+        <button type="button" class="rx-add-btn" data-rx-toggle aria-haspopup="true" aria-expanded="false" title="Добавить реакцию" aria-label="Добавить реакцию">{{template "icon-smile-plus"}}</button>
+        <div class="rx-picker" data-rx-picker hidden role="menu">
+            <button type="button" class="rx-pick" data-rx="like" title="Нравится" aria-label="Нравится">{{template "rx-icon" "like"}}</button>
+            <button type="button" class="rx-pick" data-rx="heart" title="Сердце" aria-label="Сердце">{{template "rx-icon" "heart"}}</button>
+            <button type="button" class="rx-pick" data-rx="laugh" title="Смешно" aria-label="Смешно">{{template "rx-icon" "laugh"}}</button>
+            <button type="button" class="rx-pick" data-rx="wow" title="Удивительно" aria-label="Удивительно">{{template "rx-icon" "wow"}}</button>
+            <button type="button" class="rx-pick" data-rx="sad" title="Грустно" aria-label="Грустно">{{template "rx-icon" "sad"}}</button>
+            <button type="button" class="rx-pick" data-rx="fire" title="Огонь" aria-label="Огонь">{{template "rx-icon" "fire"}}</button>
+        </div>
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{/* ─── Poll on the post page. Call with: dict "Poll" "Page". ── */}}
+{{define "poll"}}
+{{$p := .Poll}}
+<div class="poll" data-poll="{{$p.ID}}">
+    <div class="poll-head">{{template "icon-poll"}}<span class="poll-question">{{$p.Question}}</span></div>
+    <p class="poll-meta">{{if $p.Multiple}}Можно выбрать несколько вариантов{{else}}Один вариант ответа{{end}}{{with $p.EndsText}} · {{.}}{{end}}</p>
+    {{if $p.ShowResults}}
+    <ul class="poll-results">
+        {{range $p.Options}}
+        <li class="poll-result{{if .Mine}} is-mine{{end}}">
+            <span class="poll-bar" style="width: {{.Percent}}%"></span>
+            <span class="poll-result-text">{{if .Mine}}<svg class="icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-label="Ваш выбор"><path d="M20 6 9 17l-5-5"/></svg>{{end}}{{.Text}}</span>
+            <span class="poll-result-num">{{.Percent}}% <span class="poll-votes">· {{.Votes}}</span></span>
+        </li>
+        {{end}}
+    </ul>
+    {{else if .Page.CurrentUser}}
+    <form class="poll-form" data-poll-form>
+        <input type="hidden" name="poll_id" value="{{$p.ID}}">
+        <input type="hidden" name="csrf_token" value="{{.Page.CSRFToken}}">
+        {{range $p.Options}}
+        <label class="poll-option"><input type="{{if $p.Multiple}}checkbox{{else}}radio{{end}}" name="option_id" value="{{.ID}}"><span>{{.Text}}</span></label>
+        {{end}}
+        <p class="upload-error" data-poll-error hidden></p>
+        <button type="submit" class="btn small">Голосовать</button>
+    </form>
+    {{else}}
+    <ul class="poll-guest">{{range $p.Options}}<li>{{.Text}}</li>{{end}}</ul>
+    <a href="/login" class="btn secondary small">Войдите, чтобы проголосовать</a>
+    {{end}}
+    <p class="poll-foot">{{$p.VotersText}}</p>
+</div>
+{{end}}
+
+{{/* ─── Dialog list on /messages. Call with: dict "Conversations" "ActiveID" "Me". */}}
+{{define "conversation-list"}}
+{{range .Conversations}}
+<a href="/messages?c={{.ID}}" class="chat-item{{if eq .ID $.ActiveID}} is-active{{end}}" data-conv-item="{{.ID}}" data-partner="{{.PartnerID}}">
+    <span class="avatar-wrap">
+        {{if .PartnerAvatar}}<img class="avatar avatar-40" src="/uploads/avatars/{{.PartnerAvatar}}" alt="" loading="lazy">{{else}}<span class="avatar avatar-40 avatar-fallback" style="background: {{.AvatarColor}}">{{.Initial}}</span>{{end}}
+        <span class="presence-dot{{if .PartnerOnline}} is-online{{end}}" data-presence-dot="{{.PartnerID}}"></span>
+    </span>
+    <span class="chat-item-body">
+        <span class="chat-item-top"><span class="chat-item-name">{{.PartnerName}}</span><time class="chat-item-time" data-conv-time>{{.LastTime}}</time></span>
+        <span class="chat-item-bottom"><span class="chat-item-last" data-conv-last>{{if eq .LastSenderID $.Me}}Вы: {{end}}{{.LastText}}</span><span class="chat-unread" data-conv-unread{{if not .Unread}} hidden{{end}}>{{.Unread}}</span></span>
+    </span>
+</a>
+{{else}}
+<p class="chat-list-empty">Пока нет диалогов. Откройте профиль человека и нажмите «Написать».</p>
+{{end}}
+{{end}}
+
+{{/* ─── Reputation level badge. Call with a models.Level. ────── */}}
+{{define "level-badge"}}<span class="lvl lvl-{{.Key}}" title="Уровень «{{.Name}}» · репутация {{.RepText}}">{{.Name}}</span>{{end}}
+
+{{/* ─── Achievement icons by code ──────────────────────────────── */}}
+{{define "ach-icon"}}<svg class="ach-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+{{- if eq . "first_post"}}<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/><path d="M12 12v6"/><path d="M9 15h6"/>
+{{- else if eq . "first_comment"}}<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M12 9v6"/><path d="M9 12h6"/>
+{{- else if eq . "posts_10"}}<path d="M8 3h9a2 2 0 0 1 2 2v12"/><rect x="4" y="7" width="12" height="14" rx="2"/><path d="M8 12h4"/><path d="M8 16h4"/>
+{{- else if eq . "comments_50"}}<path d="M17 9a6 6 0 0 1-8.7 5.3L4 15.5l1.2-3.6A6 6 0 1 1 17 9Z"/><path d="M19.6 10.4A6 6 0 0 1 20 20.5l-3.3-1a6 6 0 0 1-5.1.2"/>
+{{- else if eq . "followers_10"}}<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/>
+{{- else if eq . "likes_100"}}<path d="M20.8 5.6a5 5 0 0 0-7.1 0L12 7.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 21.5l8.8-8.8a5 5 0 0 0 0-7.1Z"/>
+{{- else if eq . "best_answer"}}<circle cx="12" cy="9" r="6"/><path d="m9 9 2 2 4-4"/><path d="M8.5 14.2 7 22l5-3 5 3-1.5-7.8"/>
+{{- else if eq . "week"}}<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>
+{{- else if eq . "night_owl"}}<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/><path d="M17 4h3l-3 3h3"/>
+{{- else}}<circle cx="12" cy="8" r="6"/><path d="M8.2 13.2 7 22l5-3 5 3-1.2-8.8"/>
+{{- end}}</svg>{{end}}
+
+{{/* ─── «Войти через Google / GitHub». Call with AuthPageData. ── */}}
+{{define "oauth-buttons"}}
+<div class="oauth">
+    <div class="oauth-divider"><span>или</span></div>
+    <a href="/auth/google/login" class="oauth-btn oauth-google{{if not .GoogleEnabled}} is-off{{end}}"{{if not .GoogleEnabled}} title="Вход через Google не настроен на этом сервере"{{end}}>
+        <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path class="g-yellow" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path class="g-red" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path class="g-green" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2A11.9 11.9 0 0 1 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path class="g-blue" d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+        <span>Войти через Google</span>
+    </a>
+    <a href="/auth/github/login" class="oauth-btn oauth-github{{if not .GitHubEnabled}} is-off{{end}}"{{if not .GitHubEnabled}} title="Вход через GitHub не настроен на этом сервере"{{end}}>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.7.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>
+        <span>Войти через GitHub</span>
+    </a>
+</div>
+{{end}}

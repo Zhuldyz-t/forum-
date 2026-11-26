@@ -1,7 +1,10 @@
 package logger
 
 import (
+	"bufio"
+	"errors"
 	"log"
+	"net"
 	"net/http"
 	"time"
 )
@@ -16,6 +19,20 @@ func (rw *responseWriter) WriteHeader(code int) {
 	rw.status = code
 	rw.ResponseWriter.WriteHeader(code)
 }
+
+// Hijack passes the connection through for WebSocket upgrades: without it
+// the wrapper hides the underlying http.Hijacker and upgrades fail with 500.
+func (rw *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	h, ok := rw.ResponseWriter.(http.Hijacker)
+	if !ok {
+		return nil, nil, errors.New("hijacking not supported")
+	}
+	rw.status = http.StatusSwitchingProtocols
+	return h.Hijack()
+}
+
+// Unwrap lets http.ResponseController reach the original writer.
+func (rw *responseWriter) Unwrap() http.ResponseWriter { return rw.ResponseWriter }
 
 // LoggingMiddleware логирует запросы
 func LoggingMiddleware(next http.Handler) http.Handler {

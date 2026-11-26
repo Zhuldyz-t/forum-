@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "theme-init"}}
+    <title>Модерация</title>
+    <link rel="stylesheet" href="/static/style.css?v=9">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+</head>
+<body>
+{{template "header" .}}
+<main class="page admin-page">
+<div class="container">
+<h1 class="admin-title">{{template "icon-shield"}}Модерация <span class="role-chip">{{.CurrentUser.RoleLabel}}</span></h1>
+
+<nav class="tabs admin-tabs" aria-label="Разделы">
+    <a href="/admin?tab=reports" class="tab{{if eq .Tab "reports"}} is-active{{end}}">Жалобы{{if .OpenReports}} <span class="tab-count tab-alert">{{.OpenReports}}</span>{{end}}</a>
+    <a href="/admin?tab=users" class="tab{{if eq .Tab "users"}} is-active{{end}}">Пользователи</a>
+    <a href="/admin?tab=categories" class="tab{{if eq .Tab "categories"}} is-active{{end}}">Категории</a>
+    {{if .CurrentUser.IsAdmin}}<a href="/admin?tab=requests" class="tab{{if eq .Tab "requests"}} is-active{{end}}">Заявки{{if .PendingRequests}} <span class="tab-count tab-alert">{{.PendingRequests}}</span>{{end}}</a>{{end}}
+    <a href="/admin?tab=log" class="tab{{if eq .Tab "log"}} is-active{{end}}">Журнал действий</a>
+</nav>
+
+<section class="card admin-card">
+{{if eq .Tab "reports"}}
+    <form class="admin-filters" method="GET" action="/admin">
+        <input type="hidden" name="tab" value="reports">
+        <label>Статус
+            <select name="status">
+                <option value="open"{{if eq .Status "open"}} selected{{end}}>Открытые</option>
+                <option value="resolved"{{if eq .Status "resolved"}} selected{{end}}>Принятые</option>
+                <option value="dismissed"{{if eq .Status "dismissed"}} selected{{end}}>Отклонённые</option>
+                <option value="all"{{if eq .Status "all"}} selected{{end}}>Все</option>
+            </select>
+        </label>
+        <label>Что
+            <select name="type">
+                <option value="">Посты и комментарии</option>
+                <option value="post"{{if eq .Type "post"}} selected{{end}}>Посты</option>
+                <option value="comment"{{if eq .Type "comment"}} selected{{end}}>Комментарии</option>
+            </select>
+        </label>
+        <button type="submit" class="btn small">Показать</button>
+    </form>
+    {{if .Reports}}
+    <div class="table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Материал</th><th>Причина</th><th>Жалоба от</th><th>Статус</th><th>Действия</th></tr></thead>
+        <tbody>
+        {{range .Reports}}
+        <tr>
+            <td data-label="Материал">
+                <span class="cell-kicker">{{if eq .TargetType "post"}}Пост{{else}}Комментарий{{end}} · автор {{.AuthorName}}{{if .Hidden}} · <span class="pill pill-muted">скрыт</span>{{end}}</span>
+                {{if .Excerpt}}<a href="{{.URL}}" class="cell-link">{{.Short}}</a>{{else}}<span class="cell-muted">Материал удалён</span>{{end}}
+            </td>
+            <td data-label="Причина"><span class="pill pill-reason">{{.ReasonLabel}}</span>{{if .Details}}<span class="cell-details">{{.Details}}</span>{{end}}</td>
+            <td data-label="Жалоба от"><a href="/user/{{.ReporterID}}">{{.ReporterName}}</a><span class="cell-muted">{{.Ago}}</span></td>
+            <td data-label="Статус"><span class="pill pill-{{.Status}}">{{.StatusLabel}}</span></td>
+            <td data-label="Действия" class="cell-actions">
+                {{if and (eq .Status "open") .Excerpt}}
+                {{$endpoint := "/mod/post"}}{{$field := "post_id"}}{{if eq .TargetType "comment"}}{{$endpoint = "/mod/comment"}}{{$field = "comment_id"}}{{end}}
+                <form action="{{$endpoint}}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="{{$field}}" value="{{.TargetID}}">
+                    <input type="hidden" name="action" value="hide">
+                    <button type="submit" class="btn small secondary">Скрыть</button>
+                </form>
+                <form action="{{$endpoint}}" method="POST" data-confirm="Удалить материал?" data-confirm-text="Действие попадёт в журнал модерации.">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="{{$field}}" value="{{.TargetID}}">
+                    <input type="hidden" name="action" value="delete">
+                    <button type="submit" class="btn small danger">Удалить</button>
+                </form>
+                {{end}}
+                {{if eq .Status "open"}}
+                <form action="/mod/report/dismiss" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="report_id" value="{{.ID}}">
+                    <button type="submit" class="btn small ghost">Отклонить</button>
+                </form>
+                {{end}}
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    </div>
+    {{else}}<p class="admin-empty">Жалоб нет</p>{{end}}
+
+{{else if eq .Tab "users"}}
+    <form class="admin-filters" method="GET" action="/admin">
+        <input type="hidden" name="tab" value="users">
+        <label class="grow">Поиск
+            <input type="search" name="q" value="{{.Q}}" placeholder="Имя или email">
+        </label>
+        <label>Роль
+            <select name="role">
+                <option value="">Все</option>
+                <option value="user"{{if eq .Role "user"}} selected{{end}}>Пользователи</option>
+                <option value="moderator"{{if eq .Role "moderator"}} selected{{end}}>Модераторы</option>
+                <option value="admin"{{if eq .Role "admin"}} selected{{end}}>Админы</option>
+            </select>
+        </label>
+        <label>Статус
+            <select name="state">
+                <option value="">Любой</option>
+                <option value="active"{{if eq .State "active"}} selected{{end}}>Активные</option>
+                <option value="banned"{{if eq .State "banned"}} selected{{end}}>Заблокированные</option>
+            </select>
+        </label>
+        <button type="submit" class="btn small">Найти</button>
+    </form>
+    {{if .Users}}
+    <div class="table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Пользователь</th><th>Роль</th><th>Активность</th><th>Статус</th><th>Действия</th></tr></thead>
+        <tbody>
+        {{range .Users}}
+        <tr>
+            <td data-label="Пользователь">
+                <a href="/user/{{.ID}}" class="cell-user">
+                    {{if .Avatar}}<img class="avatar avatar-32" src="/uploads/avatars/{{.Avatar}}" alt="">{{else}}<span class="avatar avatar-32 avatar-fallback" style="background: {{.AvatarColor}}">{{.Initial}}</span>{{end}}
+                    <span><span class="cell-name">{{.Username}}</span><span class="cell-muted">{{.Email}}</span></span>
+                </a>
+            </td>
+            <td data-label="Роль"><span class="pill pill-role-{{.Role}}">{{.RoleLabel}}</span></td>
+            <td data-label="Активность"><span class="cell-muted">{{.Reputation}} реп. · {{.PostCount}} пост. · {{.CommentCount}} комм.</span></td>
+            <td data-label="Статус">{{if .IsBanned}}<span class="pill pill-banned" title="{{.BanText}}">Заблокирован</span><span class="cell-details">{{.BanText}}</span>{{else}}<span class="pill pill-active">Активен</span>{{end}}</td>
+            <td data-label="Действия" class="cell-actions">
+                {{if and (ne .ID $.CurrentUser.ID) (not .IsAdmin)}}
+                {{if $.CurrentUser.IsAdmin}}
+                <form action="/admin/user/role" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="user_id" value="{{.ID}}">
+                    {{if .IsModerator}}<input type="hidden" name="role" value="user"><button type="submit" class="btn small secondary">Снять модератора</button>
+                    {{else}}<input type="hidden" name="role" value="moderator"><button type="submit" class="btn small secondary">Сделать модератором</button>{{end}}
+                </form>
+                {{if .IsBanned}}
+                <form action="/admin/user/unban" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="user_id" value="{{.ID}}">
+                    <button type="submit" class="btn small secondary">Разблокировать</button>
+                </form>
+                {{else}}
+                <details class="inline-pop">
+                    <summary class="btn small danger">Заблокировать</summary>
+                    <form action="/admin/user/ban" method="POST" class="pop-form">
+                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                        <input type="hidden" name="user_id" value="{{.ID}}">
+                        <label>Срок
+                            <select name="duration">
+                                <option value="1d">1 день</option>
+                                <option value="7d">7 дней</option>
+                                <option value="30d">30 дней</option>
+                                <option value="forever">Навсегда</option>
+                            </select>
+                        </label>
+                        <label>Причина<input type="text" name="reason" maxlength="300" required placeholder="Например: спам"></label>
+                        <button type="submit" class="btn small danger">Заблокировать</button>
+                    </form>
+                </details>
+                {{end}}
+                <form action="/admin/user/delete" method="POST" data-confirm="Удалить пользователя {{.Username}}?" data-confirm-text="Будут удалены его посты, комментарии, сообщения и файлы. Отменить нельзя.">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="user_id" value="{{.ID}}">
+                    <button type="submit" class="btn small ghost-danger">Удалить</button>
+                </form>
+                {{else if not .IsModerator}}
+                <details class="inline-pop">
+                    <summary class="btn small secondary">Запросить удаление</summary>
+                    <form action="/mod/user/request-delete" method="POST" class="pop-form">
+                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                        <input type="hidden" name="user_id" value="{{.ID}}">
+                        <label>Причина для админа<input type="text" name="reason" maxlength="500" required></label>
+                        <button type="submit" class="btn small">Отправить</button>
+                    </form>
+                </details>
+                {{end}}
+                {{else}}<span class="cell-muted">—</span>{{end}}
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    </div>
+    {{else}}<p class="admin-empty">Никого не нашлось</p>{{end}}
+
+{{else if eq .Tab "categories"}}
+    {{if .CurrentUser.IsAdmin}}
+    <form class="admin-filters" method="POST" action="/admin/category">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        <input type="hidden" name="action" value="create">
+        <label class="grow">Новая категория<input type="text" name="name" maxlength="30" required placeholder="Название"></label>
+        <button type="submit" class="btn small">Добавить</button>
+    </form>
+    {{else}}<p class="admin-note">Категориями управляют администраторы.</p>{{end}}
+    <div class="table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Категория</th><th>Постов</th>{{if .CurrentUser.IsAdmin}}<th>Действия</th>{{end}}</tr></thead>
+        <tbody>
+        {{range .Categories}}
+        <tr>
+            <td data-label="Категория">{{if $.CurrentUser.IsAdmin}}
+                <form action="/admin/category" method="POST" class="rename-form">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="action" value="rename">
+                    <input type="hidden" name="id" value="{{.ID}}">
+                    <input type="text" name="name" value="{{.Name}}" maxlength="30" required aria-label="Название категории">
+                    <button type="submit" class="btn small secondary">Сохранить</button>
+                </form>{{else}}{{.Name}}{{end}}</td>
+            <td data-label="Постов">{{.Count}}</td>
+            {{if $.CurrentUser.IsAdmin}}<td data-label="Действия" class="cell-actions">
+                <form action="/admin/category" method="POST" data-confirm="Удалить категорию «{{.Name}}»?" data-confirm-text="Посты останутся, но потеряют эту категорию.">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="id" value="{{.ID}}">
+                    <button type="submit" class="btn small ghost-danger">Удалить</button>
+                </form>
+            </td>{{end}}
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    </div>
+
+{{else if eq .Tab "requests"}}
+    <form class="admin-filters" method="GET" action="/admin">
+        <input type="hidden" name="tab" value="requests">
+        <label>Статус
+            <select name="status">
+                <option value="pending"{{if eq .Status "pending"}} selected{{end}}>Ожидают</option>
+                <option value="approved"{{if eq .Status "approved"}} selected{{end}}>Одобренные</option>
+                <option value="rejected"{{if eq .Status "rejected"}} selected{{end}}>Отклонённые</option>
+                <option value="all"{{if eq .Status "all"}} selected{{end}}>Все</option>
+            </select>
+        </label>
+        <button type="submit" class="btn small">Показать</button>
+    </form>
+    {{if .Requests}}
+    <div class="table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Заявка</th><th>От кого</th><th>Текст</th><th>Статус</th><th>Решение</th></tr></thead>
+        <tbody>
+        {{range .Requests}}
+        <tr>
+            <td data-label="Заявка">{{.TypeLabel}}{{if .TargetName}}: <a href="/user/{{.TargetID}}">{{.TargetName}}</a>{{end}}</td>
+            <td data-label="От кого"><a href="/user/{{.UserID}}">{{.UserName}}</a><span class="cell-muted">{{.Ago}}</span></td>
+            <td data-label="Текст"><span class="cell-details">{{.Text}}</span></td>
+            <td data-label="Статус"><span class="pill pill-{{.Status}}">{{.StatusLabel}}</span></td>
+            <td data-label="Решение" class="cell-actions">{{if eq .Status "pending"}}
+                <form action="/admin/request" method="POST"{{if eq .Type "delete_user"}} data-confirm="Удалить пользователя {{.TargetName}}?" data-confirm-text="Все его материалы будут удалены. Отменить нельзя."{{end}}>
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="request_id" value="{{.ID}}">
+                    <input type="hidden" name="decision" value="approve">
+                    <button type="submit" class="btn small">Одобрить</button>
+                </form>
+                <form action="/admin/request" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+                    <input type="hidden" name="request_id" value="{{.ID}}">
+                    <input type="hidden" name="decision" value="reject">
+                    <button type="submit" class="btn small ghost">Отклонить</button>
+                </form>{{else}}<span class="cell-muted">—</span>{{end}}
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    </div>
+    {{else}}<p class="admin-empty">Заявок нет</p>{{end}}
+
+{{else}}
+    <form class="admin-filters" method="GET" action="/admin">
+        <input type="hidden" name="tab" value="log">
+        <label>Действие
+            <select name="action">
+                <option value="">Все действия</option>
+                {{range .LogActions}}<option value="{{.Key}}"{{if eq $.Action .Key}} selected{{end}}>{{.Label}}</option>{{end}}
+            </select>
+        </label>
+        <label class="grow">Поиск
+            <input type="search" name="q" value="{{.Q}}" placeholder="Кто или подробности">
+        </label>
+        <button type="submit" class="btn small">Найти</button>
+    </form>
+    {{if .Log}}
+    <div class="table-wrap">
+    <table class="admin-table">
+        <thead><tr><th>Когда</th><th>Кто</th><th>Действие</th><th>Над чем</th></tr></thead>
+        <tbody>
+        {{range .Log}}
+        <tr>
+            <td data-label="Когда"><span class="cell-muted">{{.When}}</span></td>
+            <td data-label="Кто">{{.ActorName}}</td>
+            <td data-label="Действие"><span class="pill pill-log">{{.ActionLabel}}</span></td>
+            <td data-label="Над чем"><span class="cell-details">{{.Details}}</span><span class="cell-muted">{{.TargetType}} #{{.TargetID}}</span></td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+    </div>
+    {{else}}<p class="admin-empty">Записей нет</p>{{end}}
+{{end}}
+</section>
+</div>
+</main>
+{{template "page-end" .}}
+</body>
+</html>

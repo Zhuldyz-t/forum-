@@ -14,7 +14,7 @@ func (r *ReactionRepository) TogglePost(userID, postID, value int) error {
 	var current int
 	err = tx.QueryRow(`SELECT value FROM post_reactions WHERE user_id = ? AND post_id = ?`, userID, postID).Scan(&current)
 	if err == sql.ErrNoRows {
-		if _, err = tx.Exec(`INSERT INTO post_reactions (user_id, post_id, value) VALUES (?, ?, ?)`, userID, postID, value); err != nil {
+		if _, err = tx.Exec(`INSERT INTO post_reactions (user_id, post_id, value, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`, userID, postID, value); err != nil {
 			return err
 		}
 		return tx.Commit()
@@ -25,7 +25,7 @@ func (r *ReactionRepository) TogglePost(userID, postID, value int) error {
 	if current == value {
 		_, err = tx.Exec(`DELETE FROM post_reactions WHERE user_id = ? AND post_id = ?`, userID, postID)
 	} else {
-		_, err = tx.Exec(`UPDATE post_reactions SET value = ? WHERE user_id = ? AND post_id = ?`, value, userID, postID)
+		_, err = tx.Exec(`UPDATE post_reactions SET value = ?, created_at = CURRENT_TIMESTAMP WHERE user_id = ? AND post_id = ?`, value, userID, postID)
 	}
 	if err != nil {
 		return err

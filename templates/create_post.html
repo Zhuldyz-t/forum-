@@ -3,44 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "theme-init"}}
     <title>Создать пост</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=9">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
     <link rel="manifest" href="/static/site.webmanifest">
 </head>
 <body>
-<header class="site-header">
-    <div class="container site-header-inner">
-        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
-        <nav class="nav-right"><a href="/" class="btn secondary">Главная</a></nav>
-    </div>
-</header>
+{{template "header" .}}
 <main class="page">
 <div class="container">
 <section class="card form-card">
     <h1 class="form-title">Создать пост</h1>
     {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
-    <form action="/post/create" method="POST" class="auth-form">
-        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-        <label>Заголовок<input type="text" name="title" value="{{.Title}}" placeholder="Кратко опишите тему поста" required></label>
-        <label>Текст<textarea name="content" rows="8" placeholder="Раскройте тему поста подробнее" required>{{.Content}}</textarea></label>
-        <fieldset class="form-group">
-            <legend>Категории</legend>
-            <div class="category-list">
-                {{range .Categories}}
-                <label class="category-item"><input type="checkbox" name="categories" value="{{.ID}}" {{if index $.SelectedIDs .ID}}checked{{end}}><span>{{.Name}}</span></label>
-                {{end}}
-            </div>
-        </fieldset>
-        <div class="form-actions">
-            <a href="/" class="btn secondary">Отмена</a>
-            <button type="submit" class="btn">Опубликовать</button>
-        </div>
-    </form>
+    {{template "post-form" dict "Page" . "Action" "/post/create" "Submit" "Опубликовать" "Cancel" "/" "Poll" .Poll}}
 </section>
 </div>
 </main>
+{{template "page-end" .}}
 </body>
 </html>

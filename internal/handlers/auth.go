@@ -156,25 +156,44 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		h.render(w, "login.html", data, http.StatusUnauthorized)
 		return
 	}
-
-	sessionID := uuid.New().String()
-	expiresAt := time.Now().Add(h.SessionMaxAge)
-	if err := h.Sessions.Replace(sessionID, user.ID, expiresAt); err != nil {
-		logger.Error("Session.Replace", err)
-		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
+	if user.IsBanned() {
+		h.renderBanned(w, user)
 		return
 	}
+	if !h.startSession(w, user.ID) {
+		return
+	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
 
+// renderBanned shows a blocked user why and until when.
+func (h *Handler) renderBanned(w http.ResponseWriter, user *models.User) {
+	token := h.generateCSRFToken()
+	h.setCSRFCookie(w, token)
+	h.render(w, "login.html", models.AuthPageData{Error: user.BanText(), CSRFToken: token}, http.StatusForbidden)
+}
+
+// startSession creates a session (one per user) and sets its cookie. On
+// failure it renders an error page and returns false.
+func (h *Handler) startSession(w http.ResponseWriter, userID int) bool {
+	sessionID := uuid.New().String()
+	expiresAt := time.Now().Add(h.SessionMaxAge)
+	if err := h.Sessions.Replace(sessionID, userID, expiresAt); err != nil {
+		logger.Error("Session.Replace", err)
+		h.renderError(w, http.StatusInternalServerError, "Ошибка сервера", "Попробуй позже.")
+		return false
+	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session_id",
 		Value:    sessionID,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   h.SecureCookies,
+		SameSite: http.SameSiteLaxMode,
 		Expires:  expiresAt,
 		MaxAge:   int(h.SessionMaxAge.Seconds()),
 	})
-
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	return true
 }
 
 func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
@@ -194,6 +213,8 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   h.SecureCookies,
+		SameSite: http.SameSiteLaxMode,
 		MaxAge:   -1,
 		Expires:  time.Unix(0, 0),
 	})

@@ -3,155 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "theme-init"}}
     <title>{{.Post.Title}}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=9">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
     <link rel="manifest" href="/static/site.webmanifest">
 </head>
 <body>
-<header class="site-header">
-    <div class="container site-header-inner">
-        <a href="/" class="site-logo"><h1 class="site-title">FORUM</h1></a>
-        <nav class="nav-right">
-            {{if .CurrentUser}}
-                <a href="/profile" class="user-greeting">Привет, {{.CurrentUser.Username}}</a>
-                <a href="/post/create" class="btn secondary">Создать пост</a>
-                <form action="/logout" method="POST" class="inline-form"><input type="hidden" name="csrf_token" value="{{.CSRFToken}}"><button type="submit" class="btn">Выйти</button></form>
-            {{else}}
-                <a href="/login" class="btn secondary">Войти</a>
-                <a href="/register" class="btn">Регистрация</a>
-            {{end}}
-        </nav>
-    </div>
-</header>
+{{template "header" .}}
 <main class="page">
 <div class="container">
 <section class="card post-view-card">
+    {{if .Post.IsHidden}}<p class="hidden-banner">{{template "icon-eye-off"}}Пост скрыт модератором. Его видят только автор и модераторы.</p>{{end}}
     <div class="post-header">
         <div>
             <h1 class="post-view-title">{{.Post.Title}}</h1>
-            <p class="post-view-meta">
-                {{if .Post.AuthorAvatar}}<img class="avatar-sm" src="/uploads/avatars/{{.Post.AuthorAvatar}}" alt="">{{else}}<span class="avatar-sm avatar-fallback">{{slice .Post.AuthorName 0 1}}</span>{{end}}
-                Автор: <strong>{{.Post.AuthorName}}</strong>
-                <span class="dot">•</span>
-                {{.Post.CreatedAt.Local.Format "02.01.2006 15:04"}}
-                {{if .Post.UpdatedAt}}<span class="edited-badge">(изменено {{.Post.UpdatedAt.Local.Format "02.01.2006 15:04"}})</span>{{end}}
-            </p>
+            <div class="post-view-meta author-line">
+                {{if .Post.AuthorAvatar}}<img class="avatar avatar-40" src="/uploads/avatars/{{.Post.AuthorAvatar}}" alt="">{{else}}<span class="avatar avatar-40 avatar-fallback" style="background: {{.Post.AuthorColor}}">{{.Post.AuthorInitial}}</span>{{end}}
+                <span>
+                    Автор: <a href="/user/{{.Post.AuthorID}}" class="author-link"><strong>{{.Post.AuthorName}}</strong></a> {{template "level-badge" .Post.AuthorLevel}}
+                    <span class="dot">•</span>
+                    <time title="{{.Post.CreatedAt.Local.Format "02.01.2006 15:04"}}">{{.Post.Ago}}</time>
+                    {{if .Post.UpdatedAt}}<span class="edited-badge" title="Изменено {{.Post.UpdatedAt.Local.Format "02.01.2006 15:04"}}">изменено</span>{{end}}
+                </span>
+            </div>
         </div>
-        <a href="/" class="btn secondary small">Назад к постам</a>
+        <div class="post-header-actions">
+            <a href="/" class="btn secondary small">Назад к постам</a>
+            {{if .CurrentUser}}{{template "post-menu" dict "Post" .Post "Page" .}}{{end}}
+        </div>
     </div>
 
-    <div class="post-view-content">
-        <p>{{.Post.Content}}</p>
-    </div>
+    <div class="post-view-content md">{{.Post.HTML}}</div>
+
+    {{with .Poll}}{{template "poll" dict "Poll" . "Page" $}}{{end}}
+
+    {{if .Post.ImagePath}}
+    <button type="button" class="post-image-btn" data-lightbox="/uploads/posts/{{.Post.ImagePath}}" title="Открыть на весь экран" aria-label="Открыть картинку на весь экран">
+        <img class="post-view-image" src="/uploads/posts/{{.Post.ImagePath}}" alt="">
+    </button>
+    {{end}}
 
     {{if .Post.Categories}}
     <div class="post-categories">
-        {{range .Post.Categories}}
-            <span class="category-badge">{{.}}</span>
-        {{end}}
+        {{range .Post.Categories}}<a href="/?category={{.}}" class="category-badge">{{.}}</a>{{end}}
     </div>
     {{end}}
 
     <div class="post-reactions-bar">
-        <div class="post-stats">
-            <span>👍 {{.Post.Likes}}</span>
-            <span>👎 {{.Post.Dislikes}}</span>
-            <span>💬 {{len .Comments}}</span>
+        <div class="post-card-foot">
+            {{template "reactions" dict "Post" .Post "Page" .}}
+            <span class="react-stat" title="Комментарии">{{template "icon-comment"}}<span>{{.Post.CommentCount}}</span></span>
+            {{template "bookmark-btn" dict "Post" .Post "Page" .}}
         </div>
-
-        {{if .CurrentUser}}
-        <div class="reaction-actions">
-            <form action="/reaction/post" method="POST" class="inline-form">
-                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-                <input type="hidden" name="post_id" value="{{.Post.ID}}">
-                <input type="hidden" name="value" value="1">
-                <button class="btn small" type="submit">👍 Нравится</button>
-            </form>
-
-            <form action="/reaction/post" method="POST" class="inline-form">
-                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-                <input type="hidden" name="post_id" value="{{.Post.ID}}">
-                <input type="hidden" name="value" value="-1">
-                <button class="btn secondary small" type="submit">👎 Не нравится</button>
-            </form>
-        </div>
-        {{end}}
     </div>
 
-    {{if and .CurrentUser (eq .CurrentUser.ID .Post.AuthorID)}}
-    <div class="owner-actions">
-        <a href="/post/edit?id={{.Post.ID}}" class="btn secondary">Редактировать пост</a>
-        <form action="/post/delete" method="POST" class="inline-form">
-            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
-            <input type="hidden" name="post_id" value="{{.Post.ID}}">
-            <button class="btn danger" type="submit">Удалить пост</button>
-        </form>
-    </div>
-    {{end}}
 </section>
 
-<section class="card comments-card">
+<section class="card comments-card" id="comments">
     <div class="section-head">
         <h2>Комментарии</h2>
-        <span class="comments-count">{{len .Comments}}</span>
+        <span class="comments-count">{{.CommentTotal}}</span>
     </div>
 </section>
 
-<section class="comments-list">
+{{with .Best}}
+<section class="card comment-card best-pinned">
+    <p class="best-pinned-title">{{template "icon-check"}}Лучший ответ</p>
+    {{template "comment" dict "C" . "Page" $ "Pinned" true}}
+    <a href="#comment-{{.ID}}" class="best-pinned-link">Перейти к ответу в ветке</a>
+</section>
+{{end}}
+
+<section class="comments-list" data-comments data-csrf="{{.CSRFToken}}">
     {{if .Comments}}
         {{range .Comments}}
-        <article class="card comment-card">
-            <div class="comment-top">
-                {{if .AuthorAvatar}}<img class="avatar-md" src="/uploads/avatars/{{.AuthorAvatar}}" alt="">{{else}}<span class="avatar-md avatar-fallback">{{slice .AuthorName 0 1}}</span>{{end}}
-                <div>
-                    <p class="comment-author">{{.AuthorName}}</p>
-                    <p class="comment-date">{{.CreatedAt.Local.Format "02.01.2006 15:04"}}</p>
-                </div>
-            </div>
-
-            <div class="comment-body">
-                <p>{{.Content}}</p>
-            </div>
-
-            <div class="comment-bottom">
-                <div class="comment-stats">
-                    <span>👍 {{.Likes}}</span>
-                    <span>👎 {{.Dislikes}}</span>
-                </div>
-
-                {{if $.CurrentUser}}
-                <div class="reaction-actions">
-                    <form action="/reaction/comment" method="POST" class="inline-form">
-                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
-                        <input type="hidden" name="comment_id" value="{{.ID}}">
-                        <input type="hidden" name="post_id" value="{{$.Post.ID}}">
-                        <input type="hidden" name="value" value="1">
-                        <button class="btn small" type="submit">👍</button>
-                    </form>
-
-                    <form action="/reaction/comment" method="POST" class="inline-form">
-                        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
-                        <input type="hidden" name="comment_id" value="{{.ID}}">
-                        <input type="hidden" name="post_id" value="{{$.Post.ID}}">
-                        <input type="hidden" name="value" value="-1">
-                        <button class="btn secondary small" type="submit">👎</button>
-                    </form>
-                </div>
-                {{end}}
-
-                {{if and $.CurrentUser (eq $.CurrentUser.ID .UserID)}}
-                <form action="/comment/delete" method="POST" class="inline-form">
-                    <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
-                    <input type="hidden" name="comment_id" value="{{.ID}}">
-                    <input type="hidden" name="post_id" value="{{$.Post.ID}}">
-                    <button class="btn danger small" type="submit">Удалить</button>
-                </form>
-                {{end}}
-            </div>
-        </article>
+        <article class="card comment-card">{{template "comment" dict "C" . "Page" $}}</article>
         {{end}}
     {{else}}
         <section class="card empty-comments">
@@ -173,7 +102,7 @@
     <form action="/comment/create" method="POST" class="comment-form compact-comment-form">
         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
         <input type="hidden" name="post_id" value="{{.Post.ID}}">
-        <textarea name="content" rows="3" placeholder="Напишите комментарий..." required></textarea>
+        <textarea name="content" rows="3" maxlength="10000" placeholder="Напишите комментарий… Поддерживается Markdown и @упоминания" required data-mentions></textarea>
         <div class="comment-form-actions">
             <button class="btn small" type="submit">Отправить</button>
         </div>
@@ -184,5 +113,20 @@
 </section>
 </div>
 </main>
+{{if .CurrentUser}}
+<template id="reply-form-tpl">
+    <form action="/comment/create" method="POST" class="comment-form reply-form">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        <input type="hidden" name="post_id" value="{{.Post.ID}}">
+        <input type="hidden" name="parent_id" value="">
+        <textarea name="content" rows="3" maxlength="10000" placeholder="Ваш ответ…" required data-mentions></textarea>
+        <div class="comment-form-actions">
+            <button type="button" class="btn secondary small" data-reply-cancel>Отмена</button>
+            <button type="submit" class="btn small">Ответить</button>
+        </div>
+    </form>
+</template>
+{{end}}
+{{template "page-end" .}}
 </body>
 </html>
